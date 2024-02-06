@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function HomePage() {
+function HomePage({history}) {
+    const navigate = useNavigate();
   return <div className="HomePage">
   <h3>EduToon: Making academic research more accessible.</h3>
   <h4>Welcome to EduToon! This tool uses generative AI to turn research papers into informational comics.
@@ -31,6 +33,7 @@ function HomePage() {
       <input type="text" id="panelscene" name="texts"/>
       <input type="submit" value="Submit"/>
   </form>
+  <button onClick={() => navigate('/loading')}>Go to Loading</button>
   </div>
 }
 
