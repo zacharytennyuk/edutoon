@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomePage from './HomePage';
-import LoadingPage from './LoadingPage';
-import DisplayPage from './DisplayPage';
+import HomePage from './components/HomePage';
+import LoadingPage from './components/LoadingPage';
+import DisplayPage from './components/DisplayPage';
 
 function App() {
   return (
@@ -9,8 +9,8 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<HomePage />} exact />
-          <Route path="/loading" element={LoadingPage} />
-          <Route path="/display" element={DisplayPage} />
+          <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/display" element={<DisplayPage />} />
         </Routes>
       </div>
     </Router>

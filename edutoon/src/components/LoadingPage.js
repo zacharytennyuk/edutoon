@@ -8,13 +8,13 @@ function LoadingPage({ history }) {
     useEffect(() => {
       const timer = setTimeout(() => {
         navigate('/display');
-      }, 2500);
+      }, 500);
       return () => clearTimeout(timer);
     }, [navigate]);
     
     return (
-      <div className="LoadingPage">
-        <h3>Loading...</h3>
+      <div>
+        <h1>Loading...</h1>
       </div>
     );
   }

@@ -33,7 +33,7 @@ function HomePage({history}) {
       <input type="text" id="panelscene" name="texts"/>
       <input type="submit" value="Submit"/>
   </form>
-  <button onClick={() => navigate('/loading')}>Go to Loading</button>
+  <button onClick={() => navigate('/loading')}>Create</button>
   </div>
 }
 
