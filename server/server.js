@@ -1,37 +1,12 @@
 require('dotenv').config();
-const openai = new OpenAI.Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const { OpenAIApi } = require("openai");
-
+const OpenAI = require('openai');
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000; // Use the environment port or 3000
 
-app.use(express.json()); // Middleware to parse JSON bodies
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-app.get('/', (req, res) => {
-  res.send('Server is running.');
-});
+async function main() {
+  const image = await openai.images.generate({ prompt: "1 comic panel of a professor teaching in a superhero style." });
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-});
-
-app.post('/generate-text', async (req, res) => {
-  const openai = new OpenAIApi(new OpenAI.Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  }));
-  
-  try {
-    const response = await openai.createCompletion("gpt-4-0125-preview", {
-      prompt: req.body.prompt,
-      temperature: 0.7,
-      max_tokens: 256,
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error calling the OpenAI API");
-  }
-});
+  console.log(image.data);
+}
+main();
