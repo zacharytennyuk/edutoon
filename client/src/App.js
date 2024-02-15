@@ -1,11 +1,15 @@
+import React /*, { useEffect, useState } */ from 'react'
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import LoadingPage from './components/LoadingPage';
 import DisplayPage from './components/DisplayPage';
 
 function App() {
+  
   return (
-    <Router>
+    <div>
+      <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={<HomePage />} exact />
@@ -13,8 +17,10 @@ function App() {
           <Route path="/display" element={<DisplayPage />} />
         </Routes>
       </div>
-    </Router>
-  );
+      </Router>
+
+    </div>
+  ); 
 }
 
 export default App;

@@ -13,8 +13,6 @@ function HomePage({history}) {
       <li>Generative AI will summarize it.</li>
       <li>Enjoy the comic!</li>
   </ul>
-  {/* <a href="https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo">Using GPT-4 OpenAI API</a>
-  <img src=""></img> */}
   
   <form action="index.html" method="GET">
       <p>Add Research PDF</p>
