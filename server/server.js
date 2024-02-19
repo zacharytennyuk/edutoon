@@ -16,23 +16,37 @@ app.post("/create-panel", async (req, res) => {
 
     //const panelPrompt = req.body.panelPrompt; prompt input
 
-    console.log("loading panel");
+    console.log("Generating panel.");
 
     // working URL generation
-    const panel = await openai.images.generate({model: "dall-e-3", prompt: "A cute mandarin duck!"});
+    const {abstract} = req.body;
+    console.log("Abstract extracted: ", {abstract});
+    const summary = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {"role": "system", "content": "You create text summaries of research abstract inputs. Take user input (a research abstract) and output a prompt for dalle-3 to create a single comic panel that visually summarizes the abstract."},
+        {"role": "user", "content": abstract}],
+    });
+    console.log("Generated prompt: ", summary.choices[0].message.content);
+    console.log("-----");
+    const prompt = summary.choices[0].message.content;
+    const panel = await openai.images.generate({model: "dall-e-3", prompt: prompt});
     const panelURL = panel.data[0].url;
-    console.log("server log panel data ---");
-    console.log(panel.data[0].url);
-    console.log("server log ---");
-
-
-    //const panelURL = placeholderDuck;
+    // console.log("server log panel data ---");
+    // console.log(panel.data[0].url);
+    // console.log("server log ---");
+    
+    // const panelURL = placeholderDuck;
+    console.log("Generated image: ", panelURL);
+    console.log("-----");
     res.json({panelURL: panelURL});
+
   } catch (error) {
+
     console.error("Error from OpenAI:", error);
     res.status(500).send("Could not create panel.");
+
   }
 })
 
-
-app.listen(port, () => {console.log('Server started on port 5200')});
+app.listen(port, () => console.log('Server started on port', port))

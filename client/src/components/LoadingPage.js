@@ -2,9 +2,10 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function LoadingPage({ history }) {
+export default function LoadingPage({ history }) {
     
     const navigate = useNavigate();
+
     useEffect(() => {
       const timer = setTimeout(() => {
         navigate('/display');
@@ -18,5 +19,3 @@ function LoadingPage({ history }) {
       </div>
     );
   }
-  
-  export default LoadingPage;
