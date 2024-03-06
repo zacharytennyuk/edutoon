@@ -12,6 +12,7 @@ export default function DisplayPage({history}) {
 
   const loc = useLocation();
   const panelURL = loc.state?.panelURL;
+  const generatedPrompt = loc.state?.generatedPrompt;
 
   // useEffect(() => {
   //   const fetchPanel = async () => {
@@ -36,6 +37,7 @@ export default function DisplayPage({history}) {
       ) : (
         <p>No panel!</p>
       )}
+      <p>AI-Generated Prompt: {generatedPrompt || 'PROMPT MISSING!'}</p>
       <br />
       <button onClick={() => navigate('/')}>Restart</button>
     </div>

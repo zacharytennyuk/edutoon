@@ -8,13 +8,19 @@ export default function HomePage({history}) {
     const navigate = useNavigate();
     const [abstract, setAbstract] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
+    //const [generatedPrompt, setgeneratedPrompt] = useState('');
 
     const generation = async (event) => {
         event.preventDefault();
         setIsGenerating(true);
         try {
             const panel = await axios.post("http://localhost:5200/create-panel", {abstract});
-            navigate('/display', {state: {panelURL: panel.data.panelURL}});
+            navigate('/display', {
+                state: { 
+                    generatedPrompt: panel.data.generatedPrompt,
+                    panelURL: panel.data.panelURL
+                }
+            });
         } catch (error) {
             console.error("Error fetching panel:", error);
             alert("Failed to generate panel, sorry :(");
@@ -35,10 +41,10 @@ export default function HomePage({history}) {
   return <div className="HomePage">
     <h3>EduToon: Making academic research more accessible.</h3>
     <h4>Welcome to EduToon! This tool uses generative AI to turn research papers into informational comics.
-        Please upload the paper you want to turn into a comic.
+        Please paste the abstract you want to turn into a comic.
     </h4>
     <ul>
-        <li>Upload a research pdf.</li>
+        <li>Paste an abstract.</li>
         <li>Generative AI will summarize it.</li>
         <li>Enjoy the comic!</li>
     </ul>
@@ -46,7 +52,10 @@ export default function HomePage({history}) {
 
     
     {isGenerating ? (
-        <p>Attempting to arrange pixels...</p>
+        <>
+            <p>Attempting to arrange pixels...</p>
+            <p>Abstract: {abstract}</p>
+        </>
     ) : (
         <form onSubmit = {generation}>
             <textarea
