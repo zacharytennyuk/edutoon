@@ -8,13 +8,13 @@ export default function HomePage({history}) {
     const navigate = useNavigate();
     const [abstract, setAbstract] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
-    //const [generatedPrompt, setgeneratedPrompt] = useState('');
 
     const generation = async (event) => {
         event.preventDefault();
         setIsGenerating(true);
         try {
-            const panel = await axios.post("http://localhost:5200/create-panel", {abstract});
+            const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/data`, {abstract});
+            
             navigate('/display', {
                 state: { 
                     generatedPrompt: panel.data.generatedPrompt,
@@ -29,15 +29,6 @@ export default function HomePage({history}) {
         }
     }
     
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const result = await fetch('http://localhost:3001/abstract');
-    //         const .jsonResult = await result.json();
-    //         setAbstract(abstractResult);
-    //     }
-
-    //     fetchData();
-    // }, [])
   return <div className="HomePage">
     <h3>EduToon: Making academic research more accessible.</h3>
     <h4>Welcome to EduToon! This tool uses generative AI to turn research papers into informational comics.
@@ -48,8 +39,6 @@ export default function HomePage({history}) {
         <li>Generative AI will summarize it.</li>
         <li>Enjoy the comic!</li>
     </ul>
-    
-
     
     {isGenerating ? (
         <>

@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react'
-
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import LoadingPage from './components/LoadingPage';
 import DisplayPage from './components/DisplayPage';
