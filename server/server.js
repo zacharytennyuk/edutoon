@@ -6,15 +6,15 @@ const openai = new OpenAI(process.env.OPENAI_API_KEY);
 const app = express();
 const port = 5200;
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://zacharytennyuk.github.io/edutoon'
+}));
 app.use(express.json());
 
 const placeholderDuck = 'https://cdn.pixabay.com/photo/2017/01/30/10/59/animal-2020580_1280.jpg';
 
 app.post("/create-panel", async (req, res) => {
   try{
-
-    //const panelPrompt = req.body.panelPrompt; prompt input
 
     console.log("Generating panel.");
 
@@ -29,17 +29,17 @@ app.post("/create-panel", async (req, res) => {
     });
     console.log("Generated prompt: ", summary.choices[0].message.content);
     console.log("-----");
-    const prompt = summary.choices[0].message.content;
-    const panel = await openai.images.generate({model: "dall-e-3", prompt: prompt});
+    const generatedPrompt = summary.choices[0].message.content;
+
+    // image generation
+    const panel = await openai.images.generate({model: "dall-e-3", prompt: generatedPrompt});
     const panelURL = panel.data[0].url;
-    // console.log("server log panel data ---");
-    // console.log(panel.data[0].url);
-    // console.log("server log ---");
+    console.log("server log ---");
     
     // const panelURL = placeholderDuck;
     console.log("Generated image: ", panelURL);
     console.log("-----");
-    res.json({panelURL: panelURL});
+    res.json({ generatedPrompt, panelURL });
 
   } catch (error) {
 

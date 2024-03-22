@@ -1,3 +1,5 @@
 # .gitignore content
 node_modules/
+.env.local
+.env.production
 .env
