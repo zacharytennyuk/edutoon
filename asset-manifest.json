@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/edutoon/static/css/main.31d6cfe0.css",
-    "main.js": "/edutoon/static/js/main.0832ffbf.js",
+    "main.js": "/edutoon/static/js/main.ac8a460c.js",
     "static/js/592.c9f94149.chunk.js": "/edutoon/static/js/592.c9f94149.chunk.js",
     "index.html": "/edutoon/index.html",
-    "main.0832ffbf.js.map": "/edutoon/static/js/main.0832ffbf.js.map",
+    "main.ac8a460c.js.map": "/edutoon/static/js/main.ac8a460c.js.map",
     "592.c9f94149.chunk.js.map": "/edutoon/static/js/592.c9f94149.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.31d6cfe0.css",
-    "static/js/main.0832ffbf.js"
+    "static/js/main.ac8a460c.js"
   ]
 }
