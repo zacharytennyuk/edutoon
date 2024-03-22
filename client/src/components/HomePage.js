@@ -13,7 +13,7 @@ export default function HomePage({history}) {
         event.preventDefault();
         setIsGenerating(true);
         try {
-            const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/data`, {abstract});
+            const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/create-panel`, {abstract});
             
             navigate('/display', {
                 state: { 

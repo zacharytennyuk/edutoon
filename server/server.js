@@ -6,9 +6,18 @@ const openai = new OpenAI(process.env.OPENAI_API_KEY);
 const app = express();
 const port = 5200;
 
+const Origins = ['https://zacharytennyuk.github.io', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+
 app.use(cors({
-  origin: 'https://zacharytennyuk.github.io/edutoon'
+  origin: function (origin, callback) {
+    if (!origin || Origins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('CORS error!'))
+    }
+  }
 }));
+
 app.use(express.json());
 
 const placeholderDuck = 'https://cdn.pixabay.com/photo/2017/01/30/10/59/animal-2020580_1280.jpg';
