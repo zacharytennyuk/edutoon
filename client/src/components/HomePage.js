@@ -23,7 +23,7 @@ export default function HomePage({history}) {
             });
         } catch (error) {
             console.error("Error fetching panel:", error);
-            alert("Failed to generate panel, sorry :(");
+            alert({error});
         } finally {
             setIsGenerating(false);
         }
