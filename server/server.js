@@ -6,7 +6,7 @@ const openai = new OpenAI(process.env.OPENAI_API_KEY);
 const app = express();
 const port = 5200;
 
-const Origins = ['https://zacharytennyuk.github.io', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+const Origins = ['https://edutoon-xkx7.onrender.com', 'http://localhost:3000', 'http://127.0.0.1:3000'];
 
 app.use(cors({
   origin: function (origin, callback) {
