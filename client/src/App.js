@@ -1,13 +1,12 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import './index.css';
 import HomePage from './components/HomePage';
 import LoadingPage from './components/LoadingPage';
 import DisplayPage from './components/DisplayPage';
 
-function App() {
-  
+export default function App() {
   return (
-    <div>
-      <Router>
+    <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={<HomePage />} exact />
@@ -15,10 +14,6 @@ function App() {
           <Route path="/display" element={<DisplayPage />} />
         </Routes>
       </div>
-      </Router>
-
-    </div>
+    </Router>
   ); 
 }
-
-export default App;

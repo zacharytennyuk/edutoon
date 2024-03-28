@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Button from './Button';
 
 export default function HomePage({history}) {
     
@@ -18,7 +19,8 @@ export default function HomePage({history}) {
             navigate('/display', {
                 state: { 
                     generatedPrompt: panel.data.generatedPrompt,
-                    panelURL: panel.data.panelURL
+                    panelURL: panel.data.panelURL,
+                    panelSummary: panel.data.generatedSummary
                 }
             });
         } catch (error) {
@@ -54,7 +56,7 @@ export default function HomePage({history}) {
                 required
             />
             <br />
-            <button type="submit">Generate</button>
+            <Button type="submit">Generate</Button>
         </form>
     )}
     

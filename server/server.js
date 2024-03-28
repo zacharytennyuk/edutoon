@@ -27,18 +27,31 @@ app.post("/create-panel", async (req, res) => {
 
     console.log("Generating panel.");
 
-    // working URL generation
+    
     const {abstract} = req.body;
     console.log("Abstract extracted: ", {abstract});
+
+    // summary generation
     const summary = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4-0125-preview",
       messages: [
-        {"role": "system", "content": "You create text summaries of research abstract inputs. Take user input (a research abstract) and output a prompt for dalle-3 to create a single comic panel that visually summarizes the abstract."},
+        {"role": "system", "content": "You create a text summaries of research abstract inputs."},
         {"role": "user", "content": abstract}],
     });
-    console.log("Generated prompt: ", summary.choices[0].message.content);
+    console.log("Generated summary: ", summary.choices[0].message.content);
     console.log("-----");
-    const generatedPrompt = summary.choices[0].message.content;
+    const generatedSummary = summary.choices[0].message.content;
+
+    // prompt generation
+    const prompt = await openai.chat.completions.create({
+      model: "gpt-4-0125-preview",
+      messages: [
+        {"role": "system", "content": "You take user input (a research abstract) and output a prompt for dalle-3 to create a single comic panel that visually summarizes the abstract. In the prompt, explicitly state that only words in the abstract should be included in the image, if any at all."},
+        {"role": "user", "content": abstract}],
+    });
+    console.log("Generated prompt: ", prompt.choices[0].message.content);
+    console.log("-----");
+    const generatedPrompt = prompt.choices[0].message.content;
 
     // image generation
     const panel = await openai.images.generate({model: "dall-e-3", prompt: generatedPrompt});
@@ -46,9 +59,9 @@ app.post("/create-panel", async (req, res) => {
     console.log("server log ---");
     
     // const panelURL = placeholderDuck;
-    console.log("Generated image: ", panelURL);
+    console.log("Generated image URL: ", panelURL);
     console.log("-----");
-    res.json({ generatedPrompt, panelURL });
+    res.json({ generatedSummary, generatedPrompt, panelURL });
 
   } catch (error) {
 
