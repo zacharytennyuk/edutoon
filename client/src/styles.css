@@ -1,0 +1,29 @@
+.HomePage {
+    @apply min-h-screen w-full bg-orange-600 text-blue-900;
+}
+
+.DisplayPage {
+    @apply min-h-screen w-full bg-orange-600 text-blue-900;
+}
+
+.title {
+    @apply text-blue-900 text-lg;
+}
+
+.text {
+    @apply text-blue-900 text-base;
+}
+
+.list {
+    @apply text-blue-900 text-sm indent-5;
+}
+
+
+.textbox {
+    @apply rounded-lg resize px-52 py-52 text justify-start;
+}
+
+
+.btn {
+    @apply bg-blue-800 text-white border-2 border-blue-900 hover:bg-white hover:text-blue-900 shadow-lg rounded-lg px-2 py-1;
+}

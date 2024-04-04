@@ -1,5 +1,6 @@
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import './index.css';
+import './styles.css';
 import HomePage from './components/HomePage';
 import LoadingPage from './components/LoadingPage';
 import DisplayPage from './components/DisplayPage';
