@@ -5,16 +5,17 @@ export default function DisplayPage({history}) {
   const navigate = useNavigate();
 
   const loc = useLocation();
-  const panelURL = loc.state?.panelURL;
+  const generatedImage = loc.state?.generatedImage;
   const generatedPrompt = loc.state?.generatedPrompt;
   const generatedSummary = loc.state?.generatedSummary;
+  console.log(generatedSummary);
 
   return (
-    <div className="DisplayPage">
+    <div className="Page">
       <p className="title">Thank you for using EduToon. Here is your comic. Enjoy!</p>
       <p className="text">AI-Generated Prompt: {generatedPrompt || 'PROMPT MISSING!'}</p>
-      {panelURL ? (
-        <img src={panelURL} width="750" height="auto" alt="Generated comic panel"/>
+      {generatedImage ? (
+        <img src={generatedImage} width="750" height="auto" alt="Generated comic panel"/>
       ) : (
         <p className="text">AI-Generated Panel: PANEL MISSING!</p>
       )}

@@ -14,12 +14,12 @@ export default function HomePage({history}) {
         setIsGenerating(true);
         try {
             const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/create-panel`, {abstract});
-            
+
             navigate('/display', {
                 state: { 
                     generatedPrompt: panel.data.generatedPrompt,
-                    panelURL: panel.data.panelURL,
-                    panelSummary: panel.data.generatedSummary
+                    generatedImage: panel.data.generatedImage,
+                    generatedSummary: panel.data.generatedSummary,
                 }
             });
         } catch (error) {
@@ -30,14 +30,16 @@ export default function HomePage({history}) {
         }
     }
     
-  return <div className="HomePage">
+  return <div className="Page">
     <p className="title">
         EduToon: Making academic research more accessible.
     </p>
+    
     <p className="text">
         Welcome to EduToon! This tool uses generative AI to turn research papers into informational comics.
         Please paste the abstract you want to turn into a comic.
     </p>
+
     <ul className="list">
         <li>Paste an abstract.</li>
         <li>Generative AI will summarize it.</li>
@@ -52,12 +54,12 @@ export default function HomePage({history}) {
     ) : (
         <form onSubmit = {generation}>
             <textarea className="textbox"
+                style={{ width: '90vw', height: '45vh', fontFamily: 'inherit' }}
                 value={abstract}
                 onChange={(e) => setAbstract(e.target.value)}
                 placeholder="Paste abstract here!"
                 required
             />
-            <br />
             <button className="btn" type="submit">Generate</button>
         </form>
     )}

@@ -46,22 +46,31 @@ app.post("/create-panel", async (req, res) => {
     const prompt = await openai.chat.completions.create({
       model: "gpt-4-0125-preview",
       messages: [
-        {"role": "system", "content": "You take user input (a research abstract) and output a prompt for dalle-3 to create a single comic panel that visually summarizes the abstract. In the prompt, explicitly state that only words in the abstract should be included in the image, if any at all."},
+        {"role": "system", "content":
+        `The system will take user input (a research abstract) and output
+        a prompt for dalle-3 to create an image in a two-dimensional style
+        that visually summarizes the abstract with realistic scenario that
+        will aid the viewer in understanding of the research while avoiding
+        complex, abstract imagery. This prompt will avoid mentioning any
+        text to include in the image. The prompt should instruct "Avoid
+        adding text to the image."`},
         {"role": "user", "content": abstract}],
     });
+
     console.log("Generated prompt: ", prompt.choices[0].message.content);
     console.log("-----");
     const generatedPrompt = prompt.choices[0].message.content;
 
     // image generation
     const panel = await openai.images.generate({model: "dall-e-3", prompt: generatedPrompt});
-    const panelURL = panel.data[0].url;
+    const generatedImage = panel.data[0].url;
+
     console.log("server log ---");
     
     // const panelURL = placeholderDuck;
-    console.log("Generated image URL: ", panelURL);
+    console.log("Generated image URL: ", generatedImage);
     console.log("-----");
-    res.json({ generatedSummary, generatedPrompt, panelURL });
+    res.json({ generatedSummary, generatedPrompt, generatedImage });
 
   } catch (error) {
 

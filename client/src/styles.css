@@ -1,29 +1,23 @@
-.HomePage {
-    @apply min-h-screen w-full bg-orange-600 text-blue-900;
-}
-
-.DisplayPage {
-    @apply min-h-screen w-full bg-orange-600 text-blue-900;
+.Page {
+    @apply min-h-screen w-full bg-orange-300 text-blue-900 font-mono;
 }
 
 .title {
-    @apply text-blue-900 text-lg;
+    @apply text-lg bg-orange-600 font-bold px-4 py-2 shadow-xl;
 }
 
 .text {
-    @apply text-blue-900 text-base;
+    @apply text-base p-4;
 }
 
 .list {
-    @apply text-blue-900 text-sm indent-5;
+    @apply text-sm list-decimal mx-20;
 }
-
 
 .textbox {
-    @apply rounded-lg resize px-52 py-52 text justify-start;
+    @apply rounded-3xl resize text justify-start font-mono mx-4 my-4 shadow-xl;
 }
 
-
 .btn {
-    @apply bg-blue-800 text-white border-2 border-blue-900 hover:bg-white hover:text-blue-900 shadow-lg rounded-lg px-2 py-1;
+    @apply bg-orange-600 text-blue-900 hover:bg-white hover:text-blue-900 shadow-xl rounded-lg px-2 py-1 mx-8 font-mono;
 }
