@@ -33,7 +33,7 @@ app.post("/create-panel", async (req, res) => {
 
     // summary generation
     const summary = await openai.chat.completions.create({
-      model: "gpt-4-0125-preview",
+      model: "gpt-4o",
       messages: [
         {"role": "system", "content": "You create a text summaries of research abstract inputs."},
         {"role": "user", "content": abstract}],
@@ -44,16 +44,14 @@ app.post("/create-panel", async (req, res) => {
 
     // prompt generation
     const prompt = await openai.chat.completions.create({
-      model: "gpt-4-0125-preview",
+      model: "gpt-4o",
       messages: [
         {"role": "system", "content":
         `The system will take user input (a research abstract) and output
-        a prompt for dalle-3 to create an image in a two-dimensional style
-        that visually summarizes the abstract with realistic scenario that
-        will aid the viewer in understanding of the research while avoiding
-        complex, abstract imagery. This prompt will avoid mentioning any
-        text to include in the image. The prompt should instruct "Avoid
-        adding text to the image."`},
+        a prompt for dalle-3 to create an comic template in a two-dimensional style
+        that visually summarizes the abstract. The prompt should describe a realistic scenario that
+        will aid the viewer in understanding of the research. This prompt will avoid
+        mentioning any text to include in the image. The prompt should instruct "Add empty and blank white boxes for text to be added by a human viewer."`},
         {"role": "user", "content": abstract}],
     });
 
