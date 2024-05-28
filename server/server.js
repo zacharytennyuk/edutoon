@@ -46,17 +46,21 @@ app.post("/create-panel", async (req, res) => {
     const prompt = await openai.chat.completions.create({
       model: "gpt-4-0125-preview",
       messages: [
-        {"role": "system", "content":
-        `The system will take user input (a research abstract) and output
-        a prompt for dalle-3 to create an image in a two-dimensional style
-        that visually summarizes the abstract with realistic scenario that
-        will aid the viewer in understanding of the research while avoiding
-        complex, abstract imagery. This prompt will avoid mentioning any
-        text to include in the image. The prompt should instruct "Avoid
-        adding text to the image."`},
+        {
+          "role": "system",
+          "content": `
+          The system will take user input (a research abstract) and output a prompt for DALL-E to create an image
+          that serves as a visual guide to the research.
+          1. The image should be a coherent scenario that helps a viewer understand the research.
+          2. The image should clearly convey the main idea of the research for an audience who may not be familiar with the topic.
+          3. Avoid including text and abstract imagery/symbols/representations in the prompt. Focus on a real scenario.
+          4. The prompt should instruct 'Avoid including text or abstract imagery/symbols/representations. The image should be realistic in content.'
+          `
+        },
+        
         {"role": "user", "content": abstract}],
     });
-
+// 5. The prompt should provide DALL-E with both the word-for-word abstract and the generated prompt.
     console.log("Generated prompt: ", prompt.choices[0].message.content);
     console.log("-----");
     const generatedPrompt = prompt.choices[0].message.content;
