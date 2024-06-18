@@ -8,7 +8,6 @@ export default function DisplayPage({history}) {
   const generatedImage = loc.state?.generatedImage;
   const generatedPrompt = loc.state?.generatedPrompt;
   const generatedSummary = loc.state?.generatedSummary;
-  console.log(generatedSummary);
 
   return (
     <div className="Page">
