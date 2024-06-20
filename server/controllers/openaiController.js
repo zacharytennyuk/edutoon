@@ -6,7 +6,7 @@ const generateContent = async (abstract) => {
     console.log("Generating content...");
 
     const prompt = await openai.chat.completions.create({ 
-        model: "gpt-4-0125-preview", 
+        model: "gpt-4o", 
         messages: [{ 
         "role": "system", 
         "content": ` 
