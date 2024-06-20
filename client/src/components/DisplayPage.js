@@ -9,18 +9,27 @@ export default function DisplayPage({history}) {
   const generatedPrompt = loc.state?.generatedPrompt;
   const generatedSummary = loc.state?.generatedSummary;
 
+  console.log("AI-Generated Prompt:", generatedPrompt);
+
   return (
     <div className="Page">
+      
       <p className="title">Thank you for using EduToon. Here is your comic. Enjoy!</p>
-      <p className="text">AI-Generated Prompt: {generatedPrompt || 'PROMPT MISSING!'}</p>
-      {generatedImage ? (
-        <img src={generatedImage} width="750" height="auto" alt="Generated comic panel"/>
-      ) : (
-        <p className="text">AI-Generated Panel: PANEL MISSING!</p>
-      )}
-      <p className="text">AI-Generated Summary: {generatedSummary || 'SUMMARY MISSING!'}</p>
-      <br />
-      <button className="btn" onClick={() => navigate('/')}>Restart</button>
+      {/* <p className="text">AI-Generated Prompt: {generatedPrompt || 'PROMPT MISSING!'}</p> */}
+      <div className="columns">
+        <div className="image-container">
+          {generatedImage ? (
+          <img src={generatedImage} alt="Generated comic panel"/>
+          ) : (
+            <p className="text">PANEL MISSING!</p>
+          )}
+          <button className="btn" onClick={() => navigate('/')}>Restart</button>
+        </div>
+        <div className="text-container">
+          <p className="text dialogue">{generatedSummary || 'SUMMARY MISSING!'}</p>
+        </div>
+      </div>
+      
     </div>
   );
 }

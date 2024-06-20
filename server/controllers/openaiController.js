@@ -8,20 +8,21 @@ const generateContent = async (abstract) => {
     const prompt = await openai.chat.completions.create({ 
         model: "gpt-4o", 
         messages: [{ 
-        "role": "system", 
+        "role": "system",
         "content": ` 
         System Role: Detailed Prompt Generator for Image Creation 
 
-        Objective: Generate highly detailed prompts for image generation that include comprehensive descriptions of the scene, characters, background, and context inspired from this research abstract. 
+        Objective: Generate highly detailed prompts for image generation that include comprehensive descriptions of the scene, characters, 
+        background, and context inspired from this research abstract. 
 
         Instructions: 
-        The style of the image should be comic-style. 
-
+    
         Scene Description: 
         Specify the type of scene (e.g., "VR-computer science lab"). 
+        Specify the style of the image should be comic-style. 
         Describe the setting in detail, including any notable features, equipment, and atmosphere. 
         Mention the overall mood or theme of the scene. 
-
+        
         Character Descriptions: 
         Provide detailed descriptions of each character, including name, physical appearance, clothing, and accessories. 
         Describe the characters' expressions, body language, and interactions. 
