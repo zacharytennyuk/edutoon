@@ -7,6 +7,7 @@ const generateContent = async (abstract) => {
 
     const prompt = await openai.chat.completions.create({ 
         model: "gpt-4o", 
+        max_tokens: 500,
         messages: [{ 
         "role": "system",
         "content": ` 
@@ -45,6 +46,7 @@ const generateContent = async (abstract) => {
 
     const generatedPrompt = prompt.choices[0].message.content;
     console.log("Generated prompt:", generatedPrompt);
+    console.log("");
 
     const summaryContent = ` 
         Abstract: 
@@ -54,7 +56,7 @@ const generateContent = async (abstract) => {
     `; 
 
     const summary = await openai.chat.completions.create({ 
-        model: "gpt-4-0125-preview", 
+        model: "gpt-4-0125-preview",
         messages: [ 
             {"role": "system", "content": `Create a text summary of the research abstract 
                 input in the form of a dialogue script between the characters in the given 
