@@ -64,9 +64,8 @@ const generateContent = async (abstract) => {
                 
                 Example Format:
                 Character A: ...
-                CHaracter B: ...
+                Character B: ...
                 `}, 
-
             {"role": "user", "content": summaryContent} 
         ], 
     }); 
