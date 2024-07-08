@@ -19,7 +19,7 @@
 }
 
 .btn {
-    @apply bg-orange-600 text-blue-900 hover:bg-white hover:text-blue-900 shadow-xl rounded-lg p-2 py-1 mt-4 font-mono;
+    @apply bg-orange-600 text-blue-900 hover:bg-white hover:text-blue-900 shadow-xl rounded-lg p-2 py-1 mx-4 font-mono;
 }
 
 .columns {

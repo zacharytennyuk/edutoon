@@ -60,7 +60,12 @@ const generateContent = async (abstract) => {
         messages: [ 
             {"role": "system", "content": `Create a text summary of the research abstract 
                 input in the form of a dialogue script between the characters in the given 
-                image scenario .`}, 
+                image scenario. Only include lines of dialogue from the characters.
+                
+                Example Format:
+                Character A: ...
+                CHaracter B: ...
+                `}, 
 
             {"role": "user", "content": summaryContent} 
         ], 

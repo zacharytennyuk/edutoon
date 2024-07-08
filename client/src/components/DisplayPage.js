@@ -23,6 +23,7 @@ export default function DisplayPage({history}) {
           ) : (
             <p className="text">PANEL MISSING!</p>
           )}
+          <br/>
           <button className="btn" onClick={() => navigate('/')}>Restart</button>
         </div>
         <div className="text-container">
