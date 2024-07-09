@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { generateContent } = require('../controllers/midjourneyController');
 
-router.post('/create-panel', async (req, res) => {
+router.post('/create-panel-midjourney', async (req, res) => {
   try {
     const { abstract } = req.body;
     const result = await generateContent(abstract);

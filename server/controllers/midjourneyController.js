@@ -4,11 +4,12 @@ const generateContent = async (abstract) => {
     try {
         console.log("Generating content...");
 
-        const prompt = `Generate an image based on a scenario inspired by this abstract: ${abstract}`;
+        const prompt = `Generate a fun, engaging, wacky comic depicting two characters 
+        discussing the findings of this research with a setting also 
+        inspired by the research: ${abstract}`;
         const apiKey = process.env.MY_MIDJOURNEY_API_KEY;
 
         if (!apiKey) {
-            throw new Error("API key is not defined");
         }
 
         const requestData = {
@@ -47,7 +48,7 @@ const generateContent = async (abstract) => {
             await new Promise(resolve => setTimeout(resolve, delay));
 
             imageResponse = await axios.get(
-                `https://api.mymidjourney.ai/api/v1/midjourney/imagine/status/${messageId}`,
+                `https://api.mymidjourney.ai/api/v1/midjourney/message/${messageId}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${apiKey}`,
@@ -57,25 +58,26 @@ const generateContent = async (abstract) => {
 
             console.log(`Status Check ${attempts}:`, imageResponse.data);
 
-            if (imageResponse.data.status === 'completed' && imageResponse.data.images && imageResponse.data.images.length > 0) {
+            if (imageResponse.data.status === 'DONE' && imageResponse.data.uri) {
                 break;
-            } else if (imageResponse.data.status === 'queued') {
-                console.log('Image generation is still queued. Waiting...');
-            } else if (imageResponse.data.status === 'failed') {
+            } else if (imageResponse.data.status === 'QUEUED' || imageResponse.data.status === 'PROCESSING') {
+                console.log('Image generation is still in progress. Waiting...');
+            } else if (imageResponse.data.status === 'FAIL') {
                 throw new Error('Image generation failed');
             }
         }
 
-        if (!imageResponse.data.images || imageResponse.data.images.length === 0) {
-            throw new Error("No images found in the response");
+        if (!imageResponse.data.uri) {
+            throw new Error("No image found in the response");
         }
 
-        const generatedImage = imageResponse.data.images[0];  
+        const generatedImage = imageResponse.data.uri;  
 
         console.log("Generated prompt:", prompt);
         console.log("Generated image:", generatedImage);
 
-        return { generatedPrompt: prompt, generatedImage };
+        const generatedSummary = "This is a test summary.";
+        return { generatedPrompt: prompt, generatedImage, generatedSummary };
     } catch (error) {
         // Log the full error response for debugging
         if (error.response) {

@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const openaiRoutes = require('./routes/openaiRoutes.js');
+const midjourneyRoutes = require('./routes/midjourneyRoutes.js');
 const app = express();
 const port = 5200;
 
@@ -24,6 +25,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/api', openaiRoutes);
+app.use('/api', midjourneyRoutes);
 
 const upload = multer({ dest: 'uploads/' });
 app.get('/test-extract', (req, res) => {
