@@ -4,7 +4,7 @@ const cors = require('cors');
 const openaiRoutes = require('./routes/openaiRoutes.js');
 const midjourneyRoutes = require('./routes/midjourneyRoutes.js');
 const app = express();
-const port = 5200;
+const port = 5100;
 
 const { exec } = require('child_process');
 const multer = require('multer');

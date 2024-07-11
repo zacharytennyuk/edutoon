@@ -46,7 +46,7 @@ export default function DisplayPage() {
                     width: '2048px',
                     height: '2048px',
                     position: 'absolute',
-                    ...getQuadrantStyle(),
+                    // ...getQuadrantStyle(),
                   }}
                 />
                 <p className="text">{generatedSummary || 'SUMMARY MISSING!'}</p>

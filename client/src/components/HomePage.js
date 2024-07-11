@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function HomePage({ history }) {
+export default function HomePage() {
   const navigate = useNavigate();
   const [abstract, setAbstract] = useState('');
+  const [image, setImage] = useState(null); // State to hold the image file
   const [isGenerating, setIsGenerating] = useState(false);
   const [useMidJourney, setUseMidJourney] = useState(false);
 
@@ -12,12 +13,26 @@ export default function HomePage({ history }) {
     setUseMidJourney(!useMidJourney);
   };
 
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+  };
+
   const generation = async (event) => {
     event.preventDefault();
     setIsGenerating(true);
     try {
       const endpoint = useMidJourney ? '/api/create-panel-midjourney' : '/api/create-panel';
-      const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, { abstract });
+      const formData = new FormData();
+      formData.append('abstract', abstract);
+      if (image) {
+        formData.append('image', image);
+      }
+
+      const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       navigate('/display', {
         state: {
@@ -28,6 +43,13 @@ export default function HomePage({ history }) {
       });
     } catch (error) {
       console.error("Error fetching panel:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      } else {
+        console.error("Error message:", error.message);
+      }
       alert("The content you entered may not be a research abstract. Please try again.");
     } finally {
       setIsGenerating(false);
@@ -70,6 +92,7 @@ export default function HomePage({ history }) {
             placeholder="Paste abstract here!"
             required
           />
+          <input type="file" onChange={handleImageChange} accept="image/*" />
           <button className="btn" type="submit">Generate</button>
         </form>
       )}

@@ -1,15 +1,20 @@
 const axios = require('axios');
 
-const generateContent = async (abstract) => {
+const generateContent = async (abstract, imageUrl = null) => {
     try {
         console.log("Generating content...");
 
-        const prompt = `Generate a fun, engaging, wacky comic depicting two characters 
-        discussing the findings of this research with a setting also 
-        inspired by the research: ${abstract}`;
+        let prompt = '';
+        if (imageUrl) {
+            prompt = `${imageUrl} Generate a fun, engaging, wacky comic depicting two characters discussing the findings of this research with a setting also inspired by the research: ${abstract}`;
+        } else {
+            prompt = `Generate a fun, engaging, wacky comic depicting two characters discussing the findings of this research with a setting also inspired by the research: ${abstract}`;
+        }
+
         const apiKey = process.env.MY_MIDJOURNEY_API_KEY;
 
         if (!apiKey) {
+            throw new Error("API key is missing");
         }
 
         const requestData = {
@@ -40,7 +45,7 @@ const generateContent = async (abstract) => {
         // Poll for the status of the image generation
         let imageResponse;
         let attempts = 0;
-        const maxAttempts = 10;
+        const maxAttempts = 20;
         const delay = 5000; // 5 seconds
 
         while (attempts < maxAttempts) {
