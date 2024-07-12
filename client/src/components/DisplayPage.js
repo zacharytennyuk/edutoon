@@ -43,8 +43,8 @@ export default function DisplayPage() {
                   src={generatedImage}
                   alt="Generated comic panel"
                   style={{
-                    width: '2048px',
-                    height: '2048px',
+                    width: '1024px',
+                    height: '1024px',
                     position: 'absolute',
                     ...getQuadrantStyle(),
                   }}

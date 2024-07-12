@@ -4,9 +4,11 @@ const generateContent = async (abstract) => {
     try {
         console.log("Generating content...");
 
-        const prompt = `Generate a fun, engaging, wacky comic depicting two characters 
-        discussing the findings of this research with a setting also 
-        inspired by the research: ${abstract}`;
+        // const prompt = `Generate a fun, engaging, wacky comic depicting two characters 
+        // discussing the findings of this research with a setting also 
+        // inspired by the research: ${abstract}`;
+        // const prompt = `${abstract}`;
+        const prompt = `https://image.mymidjourney.ai/storage/v1/object/public/image/temp52162%2F1720758267616FullBaseImage.png Match this image style. The view should be from a different angle. The scene should incorporate aspects of the characters' conversation. ${abstract}`;
         const apiKey = process.env.MY_MIDJOURNEY_API_KEY;
 
         if (!apiKey) {
@@ -40,8 +42,8 @@ const generateContent = async (abstract) => {
         // Poll for the status of the image generation
         let imageResponse;
         let attempts = 0;
-        const maxAttempts = 10;
-        const delay = 5000; // 5 seconds
+        const maxAttempts = 20;
+        const delay = 10000; // 10 seconds
 
         while (attempts < maxAttempts) {
             attempts++;
