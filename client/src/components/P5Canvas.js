@@ -1,15 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 import p5 from 'p5';
 
-const P5Canvas = ({ imageUrl, summary, quadrant }) => {
+const P5Canvas = ({ imageUrl, summary, quadrant, characterImageUrl }) => {
   const sketchRef = useRef();
 
   useEffect(() => {
     const sketch = (p) => {
       let img;
+      let characterImg;
 
       p.preload = () => {
         img = p.loadImage(imageUrl);
+        characterImg = p.loadImage(characterImageUrl); // Load character image
       };
 
       p.setup = () => {
@@ -32,6 +34,12 @@ const P5Canvas = ({ imageUrl, summary, quadrant }) => {
         // Draw the selected quadrant of the image
         p.image(img, 0, 0, p.width, p.height, x, y, 1024, 1024);
 
+        const characterWidth = 1024;
+        const characterHeight = 1024;
+        const characterX = (1024 - characterWidth) / 2; // Centered horizontally
+        const characterY = (1024 - characterHeight) / 2; // Centered vertically
+        p.image(characterImg, characterX, characterY, characterWidth, characterHeight);
+
         // Define the bubble dimensions and position
         let bubbleWidth = p.width * 0.8;
         let bubbleX = (p.width - bubbleWidth) / 2;
@@ -44,19 +52,7 @@ const P5Canvas = ({ imageUrl, summary, quadrant }) => {
         p.noStroke();
 
         // Sample text
-        let textContent = `Dr. Rachel: “Exactly. Our research is just the beginning. We need ongoing efforts to adapt as technology evolves. Protecting user privacy in the digital landscape is an ever-moving target.”
-
-        
-Dr. Tadayoshi: “Let’s schedule a meeting with stakeholders next week. We’ll present our findings and push for 
-immediate action.”
-
-Dr. Rachel: “Agreed. The sooner we act, the better we can safeguard personal information in this rapidly advancing 
-
-
-
-
-
-digital age.”` || 'SUMMARY MISSING!';
+        let textContent = summary || 'SUMMARY MISSING!';
 
         // Calculate wrapped text height
         let words = textContent.split(' ');
@@ -78,10 +74,10 @@ digital age.”` || 'SUMMARY MISSING!';
         let wrappedTextHeight = lines.length * lineHeight;
 
         // Adjust bubble height based on text height
-        let bubbleHeight = wrappedTextHeight + 150; // Add padding
+        let bubbleHeight = wrappedTextHeight + 40; // Add padding
 
         // Position the bubble at the bottom of the canvas
-        let bubbleY = p.height - bubbleHeight - 40;
+        let bubbleY = p.height - bubbleHeight - 20;
 
         // Draw the bubble
         p.fill(255);
@@ -105,7 +101,7 @@ digital age.”` || 'SUMMARY MISSING!';
     return () => {
       p5Instance.remove();
     };
-  }, [imageUrl, summary, quadrant]);
+  }, [imageUrl, summary, quadrant, characterImageUrl]);
 
   return <div ref={sketchRef}></div>;
 };

@@ -1,14 +1,21 @@
 const axios = require('axios');
 
-const generateContent = async (abstract) => {
+const generateContent = async (input) => {
     try {
         console.log("Generating content...");
 
         // const prompt = `Generate a fun, engaging, wacky comic depicting two characters 
         // discussing the findings of this research with a setting also 
-        // inspired by the research: ${abstract}`;
-        // const prompt = `${abstract}`;
-        const prompt = `https://image.mymidjourney.ai/storage/v1/object/public/image/temp52162%2F1720758267616FullBaseImage.png Match this image style. The view should be from a different angle. The scene should incorporate aspects of the characters' conversation. ${abstract}`;
+        // inspired by the research: ${input}`;
+
+        // Initial image
+        const prompt = `${input}`;
+
+        // Panels
+        // const prompt = `https://cdn.imaginepro.ai/storage/v1/object/public/image/temp52162%2F1721604080936Test4FullBaseImage.png
+        // CREATE ANOTHER IMAGE IN THIS SAME STYLE WITH THE SAME CHARACTERS AND NO OTHERS.
+        // THE SCENE SHOULD INCORPORATE ASPECTS OF THE CHARACTERS' CONVERSATION. DO NOT 
+        // GENERATE SPEECH BUBBLES, I WILL DO IT MYSELF: ${input}`;
         const apiKey = process.env.MY_MIDJOURNEY_API_KEY;
 
         if (!apiKey) {

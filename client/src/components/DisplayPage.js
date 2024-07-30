@@ -36,9 +36,14 @@ export default function DisplayPage() {
         <div className="image-container">
           {generatedImage ? (
             useP5Canvas ? (
-              <P5Canvas imageUrl={generatedImage} summary={generatedSummary} quadrant={currentQuadrant} />
+              <P5Canvas 
+                imageUrl={generatedImage} 
+                summary={generatedSummary} 
+                quadrant={currentQuadrant}
+                characterImageUrl="/output.png"  // Ensure the correct path
+              />
             ) : (
-              <div style={{ width: '1024px', height: '1024px', overflow: 'hidden', position: 'relative' }}>
+              <div style={{ width: '1024px', height: '1024px' }}>
                 <img
                   src={generatedImage}
                   alt="Generated comic panel"
