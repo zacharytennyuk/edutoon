@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import P5Canvas from './P5Canvas';
 
 export default function DisplayPage() {
   const navigate = useNavigate();
   const loc = useLocation();
-  const generatedImage = loc.state?.generatedImage;
-  const generatedPrompt = loc.state?.generatedPrompt;
-  const generatedSummary = loc.state?.generatedSummary;
+  const { script, characterBuffer, backgroundImages } = loc.state;
+  const characterImageSrc = `data:image/png;base64,${characterBuffer}`;
 
   const [useP5Canvas, setUseP5Canvas] = useState(true);
   const [currentQuadrant, setCurrentQuadrant] = useState(1);
@@ -27,26 +26,24 @@ export default function DisplayPage() {
     return quadrantPositions[currentQuadrant - 1];
   };
 
-  console.log("AI-Generated Prompt:", generatedPrompt);
-
   return (
     <div className="Page">
       <p className="title">Thank you for using EduToon. Here is your comic. Enjoy!</p>
       <div className="columns">
-        <div className="image-container">
-          {generatedImage ? (
-            useP5Canvas ? (
+        {script.map((dialogue, index) => (
+          <div key={index} className="image-container" style={{ position: 'relative', marginBottom: '20px' }}>
+            {useP5Canvas ? (
               <P5Canvas 
-                imageUrl={generatedImage} 
-                summary={generatedSummary} 
+                imageUrl={backgroundImages[index]} 
+                summary={dialogue} 
                 quadrant={currentQuadrant}
-                characterImageUrl="/output.png"  // Ensure the correct path
+                characterImageUrl={characterImageSrc}
               />
             ) : (
               <div style={{ width: '1024px', height: '1024px' }}>
                 <img
-                  src={generatedImage}
-                  alt="Generated comic panel"
+                  src={backgroundImages[index]}
+                  alt={`Panel ${index + 1}`}
                   style={{
                     width: '1024px',
                     height: '1024px',
@@ -54,15 +51,26 @@ export default function DisplayPage() {
                     ...getQuadrantStyle(),
                   }}
                 />
-                <p className="text">{generatedSummary || 'SUMMARY MISSING!'}</p>
+                <img
+                  src={characterImageSrc}
+                  alt="Characters"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '1024px',
+                    height: '1024px'
+                  }}
+                />
+                <p className="text" style={{ position: 'absolute', bottom: '10px', left: '10px', color: 'white', background: 'rgba(0, 0, 0, 0.5)', padding: '5px' }}>
+                  {dialogue}
+                </p>
               </div>
-            )
-          ) : (
-            <p className="text">PANEL MISSING!</p>
-          )}
-          <br />
-          <button className="btn" onClick={() => navigate('/')}>Restart</button>
-        </div>
+            )}
+            <br />
+            <button className="btn" onClick={() => navigate('/')}>Restart</button>
+          </div>
+        ))}
         <div className="text-container">
           <button className="btn" onClick={() => setUseP5Canvas(!useP5Canvas)}>
             {useP5Canvas ? 'Switch to Image View' : 'Switch to P5.js View'}

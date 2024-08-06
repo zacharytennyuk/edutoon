@@ -183,12 +183,12 @@ const generateCharacters = async (input) => {
             throw new Error("No image found in the response");
         }
 
-        const generatedImage = imageResponse.data.uri;  
+        const characterImage = imageResponse.data.uri;  
 
         console.log("Generated prompt:", prompt);
-        console.log("Generated image:", generatedImage);
+        console.log("Generated image:", characterImage);
 
-        return { generatedImage };
+        return { characterImage };
 
     } catch (error) {
         // Log the full error response for debugging
@@ -215,7 +215,7 @@ const generateBackgrounds = async (script, summary) => {
 
         const panels = [];
 
-        for (let i = 0; i < script.length; i++) {
+        for (let i = 0; i < 2; i++) {
             const dialogue = script[i];
             console.log("Panel ", i, " ", dialogue);
             let prompt = `${summary} 

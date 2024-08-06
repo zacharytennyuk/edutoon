@@ -34,16 +34,17 @@ const P5Canvas = ({ imageUrl, summary, quadrant, characterImageUrl }) => {
         // Draw the selected quadrant of the image
         p.image(img, 0, 0, p.width, p.height, x, y, 1024, 1024);
 
+        // Draw the character image
         const characterWidth = 1024;
         const characterHeight = 1024;
-        const characterX = (1024 - characterWidth) / 2; // Centered horizontally
-        const characterY = (1024 - characterHeight) / 2; // Centered vertically
+        const characterX = (p.width - characterWidth) / 2; // Centered horizontally
+        const characterY = (p.height - characterHeight) / 2; // Centered vertically
         p.image(characterImg, characterX, characterY, characterWidth, characterHeight);
 
         // Define the bubble dimensions and position
-        let bubbleWidth = p.width * 0.8;
-        let bubbleX = (p.width - bubbleWidth) / 2;
-        let textSize = 16;
+        const bubbleWidth = p.width * 0.8;
+        const bubbleX = (p.width - bubbleWidth) / 2;
+        const textSize = 16;
 
         // Set text properties
         p.textSize(textSize);
@@ -51,17 +52,14 @@ const P5Canvas = ({ imageUrl, summary, quadrant, characterImageUrl }) => {
         p.fill(0);
         p.noStroke();
 
-        // Sample text
-        let textContent = summary || 'SUMMARY MISSING!';
-
         // Calculate wrapped text height
-        let words = textContent.split(' ');
-        let lineHeight = textSize * 1.5;  // Increase line height to ensure enough space between lines
-        let lines = [];
+        const words = summary.split(' ');
+        const lineHeight = textSize * 1.5;  // Increase line height to ensure enough space between lines
+        const lines = [];
         let currentLine = '';
 
         for (let i = 0; i < words.length; i++) {
-          let testLine = currentLine + words[i] + ' ';
+          const testLine = currentLine + words[i] + ' ';
           if (p.textWidth(testLine) > bubbleWidth - 40) {
             lines.push(currentLine);
             currentLine = words[i] + ' ';
@@ -71,13 +69,13 @@ const P5Canvas = ({ imageUrl, summary, quadrant, characterImageUrl }) => {
         }
         lines.push(currentLine);
 
-        let wrappedTextHeight = lines.length * lineHeight;
+        const wrappedTextHeight = lines.length * lineHeight;
 
         // Adjust bubble height based on text height
-        let bubbleHeight = wrappedTextHeight + 40; // Add padding
+        const bubbleHeight = wrappedTextHeight + 40; // Add padding
 
         // Position the bubble at the bottom of the canvas
-        let bubbleY = p.height - bubbleHeight - 20;
+        const bubbleY = p.height - bubbleHeight - 20;
 
         // Draw the bubble
         p.fill(255);
@@ -88,7 +86,6 @@ const P5Canvas = ({ imageUrl, summary, quadrant, characterImageUrl }) => {
         // Draw the text
         p.fill(0);
         p.noStroke();
-        p.textAlign(p.LEFT, p.TOP);
         let textY = bubbleY + 20;
         lines.forEach((line) => {
           p.text(line, bubbleX + 20, textY);

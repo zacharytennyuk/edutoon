@@ -205,8 +205,7 @@ const charactersAndScript = async (summary) => {
       messages: [{ 
       "role": "system",
       "content": ` 
-      Objective: Without using words that an AI would interpret as inappropriate, generate a short (under 1900 characters) description for 2 characters who know about the following research summary.
-      Provide VERY BRIEF descriptions of each character, including name and appearance.
+      Objective: Using simple vocabulary, generate a short (under 1900 characters) name and physical appearance for 2 characters who know about the following research summary.
       ` 
       }, 
       {"role": "user", "content": summary} 
@@ -226,7 +225,7 @@ const charactersAndScript = async (summary) => {
     const generatedScript = await openai.chat.completions.create({ 
         model: "gpt-4o",
         messages: [ 
-            {"role": "system", "content": `Without using words that an AI would interpret as inappropriate, create a dialogue script that communicates the key takeaways of this research summary as spoken by these characters. Only include lines of dialogue from the characters.
+            {"role": "system", "content": `Using simple vocabulary, create a dialogue script that communicates the key takeaways of this research summary as spoken by these characters. Only include lines of dialogue from the characters.
                 Format:
                 Character A Name: [dialogue]
                 Character B Name: [dialogue]

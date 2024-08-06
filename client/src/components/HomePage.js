@@ -31,12 +31,14 @@ export default function HomePage() {
           }
         });
       } else {
-        panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`);
+        panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`, { abstract });
       }
 
       navigate('/display', {
         state: {
-          summary: panel.data.summary,
+          script: panel.data.script,
+          characterBuffer: panel.data.characterBuffer,
+          backgroundImages: panel.data.backgroundImages,
         }
       });
     } catch (error) {
@@ -49,9 +51,7 @@ export default function HomePage() {
 
   return (
     <div className="Page">
-      <p className="title">
-        EduToon: Making academic research more accessible.
-      </p>
+      <p className="title">EduToon: Making academic research more accessible.</p>
 
       <p className="text">
         Welcome to EduToon! This tool uses generative AI to turn research papers into informational comics.
@@ -70,15 +70,14 @@ export default function HomePage() {
       </label>
 
       {isGenerating ? (
-        <>
-          <p className="text">Generating summary...</p>
-        </>
+        <p className="text">Generating summary...</p>
       ) : (
         <form onSubmit={generation}>
           {usePDF ? (
             <input type="file" accept="application/pdf" onChange={handlePdfChange} required />
           ) : (
-            <textarea className="textbox"
+            <textarea
+              className="textbox"
               style={{ width: '90vw', height: '45vh', fontFamily: 'inherit' }}
               value={abstract}
               onChange={(e) => setAbstract(e.target.value)}

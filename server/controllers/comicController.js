@@ -6,24 +6,9 @@ const fs = require('fs');
 
 const processPaperToComic = async (paper) => {
   try {
-    // // Step 1: Create assistant and vector store, upload file
-    // const assistant = await createAssistant();
-    // console.log("Assistant created");
 
-    // const vectorStore = await uploadFileToVectorStore(paper);
-    // console.log("File uploaded to vector store");
+    // Summarize PDF here:
 
-    // await updateAssistantWithVectorStore(assistant.id, vectorStore.id);
-    // console.log("Assistant updated with vector store");
-
-    // // Step 2: Create thread and run assistant to get summary
-    // const thread = await createThread(vectorStore.id);
-    // console.log("Thread created");
-
-    // const summary = await runAssistant(thread.id, assistant.id);
-    // console.log("Summary created:", summary);
-
-    // // Step 3: Generate characters and script
     const summary = `
     Area of Study:
         The paper looks at the privacy and safety problems with 3D online house tours used in real estate listings, especially focusing on the personal information that might be shared by mistake through these virtual tours.
@@ -36,14 +21,52 @@ const processPaperToComic = async (paper) => {
 
     Implications/Impact:
         The study shows the need for better privacy protections and tech solutions to stop personal information from being shared by mistake. This is very important for keeping people safe and private in the digital real estate market. This could lead to changes in how the industry works to better protect privacy.
-`;
-
+    `;
+    // Generate characters and script
     const { characters, script } = await charactersAndScript(summary);
 
-    // console.log("Character Description: ", characters);
-    // console.log("Script: ", script);
+    console.log("Character Description: ", characters);
+    console.log("Script: ", script);
 
-    // const characters = `
+    // Generate character image
+    const {characterImage} = await generateCharacters(characters);
+    console.log("Character Image: ", characterImage);
+    
+    // Remove background from character images using rembg
+    const charactersNoBackground = await removeBackground(characterImage);
+    console.log("Clipped Character Image: ", charactersNoBackground);
+    
+    // Generate backgrounds
+    const backgroundImages = await generateBackgrounds(script, summary);
+    console.log("Background Images:", backgroundImages);
+    
+    // Compile final comic and send to client
+    const comic = {
+      script,
+      characterBuffer: charactersNoBackground,
+      backgroundImages,
+    };
+
+    return comic;
+
+  } catch (error) {
+    console.error("Error processing paper:", error.response ? error.response.data : error.message);
+    throw new Error(error.response ? error.response.data : error.message);
+  }
+};
+
+module.exports = {
+  processPaperToComic
+};
+
+
+
+
+
+
+// const characterImage = "https://cdn.imaginepro.ai/storage/v1/object/public/cdn/509a2f96-947c-4c4f-9ff0-ff030728bcf5.png";
+
+// const characters = `
     // ### Character 1: Dr. Vanessa Sterling
     // **Name:** Dr. Vanessa Sterling
     // **Physical Appearance:** Dr. Vanessa Sterling is in her mid-40s with a poised and professional demeanor. She has short, graphite-grey hair styled in a sleek bob that complements her sharp, analytical eyes. Her skin is a medium tan, and she often wears minimal, but elegant, makeup to highlight her refined features.
@@ -91,34 +114,20 @@ const processPaperToComic = async (paper) => {
 
 // Dr. Vanessa Sterling: It’s our responsibility as both technologists and educators, Noah. Let’s work together to spread this awareness and implement safer practices.`;
     
-    // // Step 4: Generate character images
-    // const characterImage = await generateCharacters(characters);
 
-    // console.log("Character Image: ", characterImage);
+    // // Step 1: Create assistant and vector store, upload file
+    // const assistant = await createAssistant();
+    // console.log("Assistant created");
 
-    // const characterImage = "https://cdn.imaginepro.ai/storage/v1/object/public/cdn/509a2f96-947c-4c4f-9ff0-ff030728bcf5.png";
-    // // // // Step 5: Remove background from character images
-    // const characterBuffer = await removeBackground(characterImage);
-    
-    // console.log("Clipped Character Image: ", characterBuffer);
-    
-    // // Step 6: Generate backgrounds
-    const backgroundImages = await generateBackgrounds(script, summary);
-    console.log("Background Images:", backgroundImages);
-    // Step 7: Compile final comic
-    const comic = {
-      script,
-      characterBuffer,
-      backgroundImages,
-    };
+    // const vectorStore = await uploadFileToVectorStore(paper);
+    // console.log("File uploaded to vector store");
 
-    return comic;
-  } catch (error) {
-    console.error("Error processing paper:", error.response ? error.response.data : error.message);
-    throw new Error(error.response ? error.response.data : error.message);
-  }
-};
+    // await updateAssistantWithVectorStore(assistant.id, vectorStore.id);
+    // console.log("Assistant updated with vector store");
 
-module.exports = {
-  processPaperToComic
-};
+    // // Step 2: Create thread and run assistant to get summary
+    // const thread = await createThread(vectorStore.id);
+    // console.log("Thread created");
+
+    // const summary = await runAssistant(thread.id, assistant.id);
+    // console.log("Summary created:", summary);
