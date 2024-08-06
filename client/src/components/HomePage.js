@@ -2,33 +2,46 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-export default function HomePage({ history }) {
+export default function HomePage() {
   const navigate = useNavigate();
   const [abstract, setAbstract] = useState('');
+  const [pdf, setPdf] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [useMidJourney, setUseMidJourney] = useState(false);
+  const [usePDF, setUsePDF] = useState(false);
 
-  const handleToggle = () => {
-    setUseMidJourney(!useMidJourney);
+  const handleTogglePDF = () => {
+    setUsePDF(!usePDF);
+  };
+
+  const handlePdfChange = (event) => {
+    setPdf(event.target.files[0]);
   };
 
   const generation = async (event) => {
     event.preventDefault();
     setIsGenerating(true);
     try {
-      const endpoint = useMidJourney ? '/api/create-panel-midjourney' : '/api/create-panel';
-      const panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, { abstract });
+      let panel;
+      if (usePDF && pdf) {
+        const formData = new FormData();
+        formData.append('pdf', pdf);
+        panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/upload-pdf`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      } else {
+        panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`);
+      }
 
       navigate('/display', {
         state: {
-          generatedPrompt: panel.data.generatedPrompt,
-          generatedImage: panel.data.generatedImage,
-          generatedSummary: panel.data.generatedSummary,
+          summary: panel.data.summary,
         }
       });
     } catch (error) {
       console.error("Error fetching panel:", error);
-      alert("The content you entered may not be a research abstract. Please try again.");
+      alert("There was an error processing your request. Please try again.");
     } finally {
       setIsGenerating(false);
     }
@@ -42,34 +55,37 @@ export default function HomePage({ history }) {
 
       <p className="text">
         Welcome to EduToon! This tool uses generative AI to turn research papers into informational comics.
-        Please paste the abstract you want to turn into a comic.
+        Please paste the abstract you want to turn into a comic or upload a PDF file.
       </p>
 
       <ul className="list">
-        <li>Paste an abstract.</li>
+        <li>Paste an abstract or upload a PDF.</li>
         <li>Generative AI will summarize it.</li>
-        <li>Enjoy the comic!</li>
+        <li>Enjoy the summary!</li>
       </ul>
 
       <label>
-        <input type="checkbox" checked={useMidJourney} onChange={handleToggle} />
-        Use MidJourney
+        <input type="checkbox" checked={usePDF} onChange={handleTogglePDF} />
+        Use PDF
       </label>
 
       {isGenerating ? (
         <>
-          <p className="text">Attempting to arrange pixels...</p>
-          <p className="text">Abstract: {abstract}</p>
+          <p className="text">Generating summary...</p>
         </>
       ) : (
         <form onSubmit={generation}>
-          <textarea className="textbox"
-            style={{ width: '90vw', height: '45vh', fontFamily: 'inherit' }}
-            value={abstract}
-            onChange={(e) => setAbstract(e.target.value)}
-            placeholder="Paste abstract here!"
-            required
-          />
+          {usePDF ? (
+            <input type="file" accept="application/pdf" onChange={handlePdfChange} required />
+          ) : (
+            <textarea className="textbox"
+              style={{ width: '90vw', height: '45vh', fontFamily: 'inherit' }}
+              value={abstract}
+              onChange={(e) => setAbstract(e.target.value)}
+              placeholder="Paste abstract here!"
+              required
+            />
+          )}
           <button className="btn" type="submit">Generate</button>
         </form>
       )}

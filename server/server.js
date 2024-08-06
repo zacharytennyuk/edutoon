@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const openaiRoutes = require('./routes/openaiRoutes.js');
 const midjourneyRoutes = require('./routes/midjourneyRoutes.js');
+const { processPaperToComic } = require('./controllers/comicController');
 const app = express();
 const port = 5200;
 
@@ -27,19 +28,30 @@ app.use(express.json());
 app.use('/api', openaiRoutes);
 app.use('/api', midjourneyRoutes);
 
-const upload = multer({ dest: 'uploads/' });
-app.get('/test-extract', (req, res) => {
-  const pdfPath = path.join(__dirname, '..', 'client/public', 'McAmisSecurity23.pdf');
+// const upload = multer({ dest: 'uploads/' });
+// app.get('/test-extract', (req, res) => {
+//   const pdfPath = path.join(__dirname, '..', 'client/public', 'McAmisSecurity23.pdf');
   
-  exec(`python python/extract.py "${pdfPath}"`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Execution error: ${error}`);
-      console.error(`stderr: ${stderr}`);
-      return res.status(500).send(`Error processing PDF: ${stderr}`);
-    }
-    console.log(`Extracted text: ${stdout}`);
-    res.send({ extractedText: stdout });
-  });
+//   exec(`python python/extract.py "${pdfPath}"`, (error, stdout, stderr) => {
+//     if (error) {
+//       console.error(`Execution error: ${error}`);
+//       console.error(`stderr: ${stderr}`);
+//       return res.status(500).send(`Error processing PDF: ${stderr}`);
+//     }
+//     console.log(`Extracted text: ${stdout}`);
+//     res.send({ extractedText: stdout });
+//   });
+// });
+
+app.post('/api/process-paper', async (req, res) => {
+  const { paper } = req.body;
+  try {
+    const comic = await processPaperToComic(paper);
+    res.send({ comic });
+  } catch (error) {
+    console.error("Error processing paper:", error);
+    res.status(500).send({ error: "Error processing paper", details: error.message });
+  }
 });
 
 app.listen(port, () => console.log('Server started on port', port));
