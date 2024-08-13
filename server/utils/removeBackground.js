@@ -1,29 +1,45 @@
-const { exec } = require('child_process');
+const os = require('os');
 const path = require('path');
 const fs = require('fs');
+const { exec } = require('child_process');
+const { v4: uuidv4 } = require('uuid');
 
-const removeBackground = (imageUrl) => {
-    console.log('Removing background');
-    return new Promise((resolve, reject) => {
-        const outputPath = path.join(__dirname, '..', 'python', 'output.png');
-        console.log('Running python');
+// Create a temp directory if it doesn't exist
+const tempDir = path.join(os.tmpdir(), 'edutoon');
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+}
 
-        exec(`python3 ${path.join(__dirname, '..', 'python', 'remove_background.py')} "${imageUrl}" "${outputPath}"`, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Python script error: ${error}`);
-                reject(`Error processing image: ${stderr}`);
-            } else {
-                console.log(`Python script output: ${stdout}`);
-                fs.readFile(outputPath, (err, data) => {
-                    if (err) {
-                        reject(`Error reading output file: ${err}`);
-                    } else {
-                        resolve(data);
-                    }
-                });
-            }
+// Cleanup function to remove all files in the temp directory
+const cleanupTempDir = () => {
+    fs.readdir(tempDir, (err, files) => {
+        if (err) return console.error("Error reading temp directory:", err);
+
+        files.forEach(file => {
+            fs.unlink(path.join(tempDir, file), err => {
+                if (err) console.error("Error deleting temp file:", err);
+            });
         });
     });
 };
 
-module.exports = removeBackground;
+const removeBackground = (imageUrl) => {
+    return new Promise((resolve, reject) => {
+        const outputFilename = `clipped_${uuidv4()}.png`;
+        const outputPath = path.join(tempDir, outputFilename);
+
+        exec(`python3 ${path.join(__dirname, '..', 'python', 'remove_background.py')} "${imageUrl}" "${outputPath}"`, 
+        (error, stdout, stderr) => {
+            if (error) {
+                return reject(`Error processing image: ${stderr}`);
+            }
+            resolve(outputFilename);
+        });
+    });
+};
+
+
+module.exports = {
+    removeBackground,
+    cleanupTempDir
+};

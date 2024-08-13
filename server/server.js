@@ -9,6 +9,7 @@ const port = 5200;
 
 const { exec } = require('child_process');
 const multer = require('multer');
+const os = require('os');
 const fs = require('fs');
 const path = require('path');
 
@@ -42,6 +43,22 @@ app.use('/api', midjourneyRoutes);
 //     res.send({ extractedText: stdout });
 //   });
 // });
+
+// Create a temp directory if it doesn't exist
+const tempDir = path.join(os.tmpdir(), 'edutoon');
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+}
+
+app.get('/image/:filename', (req, res) => {
+  const filePath = path.join(tempDir, req.params.filename);
+  res.sendFile(filePath, err => {
+    if (err) {
+      console.error("Error retrieving the image:", err);
+      res.status(500).send("Error retrieving the image.");
+    }
+  });
+});
 
 app.post('/api/process-paper', async (req, res) => {
   const { paper } = req.body;

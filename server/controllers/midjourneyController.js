@@ -128,7 +128,7 @@ const generateCharacters = async (input) => {
             prompt: prompt,
         };
 
-        console.log("Request Data:", requestData);  // Log the request data
+        // console.log("Request Data:", requestData);  // Log the request data
 
         const response = await axios.post(
             'https://api.mymidjourney.ai/api/v1/midjourney/imagine',
@@ -141,7 +141,7 @@ const generateCharacters = async (input) => {
             }
         );
 
-        console.log("API Response:", response.data);
+        // console.log("API Response:", response.data);
 
         if (!response.data.success) {
             throw new Error("Image generation request failed");
@@ -168,7 +168,7 @@ const generateCharacters = async (input) => {
                 }
             );
 
-            console.log(`Status Check ${attempts}:`, imageResponse.data);
+            // console.log(`Status Check ${attempts}:`, imageResponse.data);
 
             if (imageResponse.data.status === 'DONE' && imageResponse.data.uri) {
                 break;
@@ -185,8 +185,8 @@ const generateCharacters = async (input) => {
 
         const characterImage = imageResponse.data.uri;  
 
-        console.log("Generated prompt:", prompt);
-        console.log("Generated image:", characterImage);
+        // console.log("Generated prompt:", prompt);
+        // console.log("Generated image:", characterImage);
 
         return { characterImage };
 
@@ -209,17 +209,17 @@ const generateCharacters = async (input) => {
     }
 };
 
-const generateBackgrounds = async (script, summary) => {
+const generateBackgrounds = async (script, summary, backgrounds) => {
     try {
         console.log("Generating background images...");
 
         const panels = [];
 
-        for (let i = 0; i < 2; i++) {
-            const dialogue = script[i];
-            console.log("Panel ", i, " ", dialogue);
-            let prompt = `${summary} 
-            Identify the topic of focus. Create a comic-style setting related to this topic.`;
+        for (let i = 0; i < backgrounds.length; i++) {
+            const background = backgrounds[i];
+            console.log("Panel ", i, " ", background);
+            let prompt = `${background} 
+            Use a comic art style`;
 
             if (prompt.length > 2048) {
                 prompt = prompt.substring(0, 2048);
@@ -232,7 +232,7 @@ const generateBackgrounds = async (script, summary) => {
 
             const requestData = { prompt };
 
-            console.log("Request Data:", requestData);
+            // console.log("Request Data:", requestData);
 
             const response = await axios.post(
                 'https://api.mymidjourney.ai/api/v1/midjourney/imagine',

@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import P5Canvas from './P5Canvas';
 
 export default function DisplayPage() {
   const navigate = useNavigate();
   const loc = useLocation();
-  const { script, characterBuffer, backgroundImages } = loc.state;
-  const characterImageSrc = `data:image/png;base64,${characterBuffer}`;
+  const { script, characterImagePath, backgroundImages } = loc.state;
 
   const [useP5Canvas, setUseP5Canvas] = useState(true);
   const [currentQuadrant, setCurrentQuadrant] = useState(1);
@@ -17,10 +16,10 @@ export default function DisplayPage() {
 
   const getQuadrantStyle = () => {
     const quadrantPositions = [
-      { transform: 'translate(0, 0)' },          // Quadrant 1: Top-left
-      { transform: 'translate(-1024px, 0)' },    // Quadrant 2: Top-right
-      { transform: 'translate(0, -1024px)' },    // Quadrant 3: Bottom-left
-      { transform: 'translate(-1024px, -1024px)' } // Quadrant 4: Bottom-right
+      { transform: 'translate(0, 0)' },
+      { transform: 'translate(-1024px, 0)' },
+      { transform: 'translate(0, -1024px)' },
+      { transform: 'translate(-1024px, -1024px)' }
     ];
 
     return quadrantPositions[currentQuadrant - 1];
@@ -37,7 +36,7 @@ export default function DisplayPage() {
                 imageUrl={backgroundImages[index]} 
                 summary={dialogue} 
                 quadrant={currentQuadrant}
-                characterImageUrl={characterImageSrc}
+                characterImageUrl={`${process.env.REACT_APP_BACKEND_URL}/image/${characterImagePath}`} // Construct URL correctly
               />
             ) : (
               <div style={{ width: '1024px', height: '1024px' }}>
@@ -52,7 +51,7 @@ export default function DisplayPage() {
                   }}
                 />
                 <img
-                  src={characterImageSrc}
+                  src={`${process.env.REACT_APP_BACKEND_URL}/image/${characterImagePath}`} // Construct URL correctly
                   alt="Characters"
                   style={{
                     position: 'absolute',

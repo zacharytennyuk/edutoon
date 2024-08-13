@@ -25,7 +25,7 @@ export default function HomePage() {
       if (usePDF && pdf) {
         const formData = new FormData();
         formData.append('pdf', pdf);
-        panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/upload-pdf`, formData, {
+        panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -34,11 +34,15 @@ export default function HomePage() {
         panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`, { abstract });
       }
 
+      console.log("Panel:", panel);
+
+      const { script, characterImagePath, backgroundImages } = panel.data.comic;
+
       navigate('/display', {
         state: {
-          script: panel.data.script,
-          characterBuffer: panel.data.characterBuffer,
-          backgroundImages: panel.data.backgroundImages,
+          script,
+          characterImagePath,
+          backgroundImages,
         }
       });
     } catch (error) {

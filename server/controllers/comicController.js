@@ -1,13 +1,14 @@
 // const { createAssistant, uploadFileToVectorStore, updateAssistantWithVectorStore, createThread, runAssistant } = require('../services/comicServices');
-const { charactersAndScript } = require('../controllers/openaiController');
+const { uploadPDF, generatePrompts } = require('../controllers/openaiController');
 const { generateCharacters, generateBackgrounds } = require('../controllers/midjourneyController');
-const removeBackground = require('../utils/removeBackground');
+const { removeBackground } = require('../utils/removeBackground');
 const fs = require('fs');
 
 const processPaperToComic = async (paper) => {
   try {
 
     // Summarize PDF here:
+    // const { summary } = await uploadPDF(paper);
 
     const summary = `
     Area of Study:
@@ -23,27 +24,41 @@ const processPaperToComic = async (paper) => {
         The study shows the need for better privacy protections and tech solutions to stop personal information from being shared by mistake. This is very important for keeping people safe and private in the digital real estate market. This could lead to changes in how the industry works to better protect privacy.
     `;
     // Generate characters and script
-    const { characters, script } = await charactersAndScript(summary);
+    const { characters, script, backgrounds } = await generatePrompts(summary);
 
     console.log("Character Description: ", characters);
     console.log("Script: ", script);
+    console.log("Backgrounds: ", backgrounds);
 
     // Generate character image
-    const {characterImage} = await generateCharacters(characters);
-    console.log("Character Image: ", characterImage);
+    // const {characterImage} = await generateCharacters(characters);
+    // console.log("Character Image: ", characterImage);
     
     // Remove background from character images using rembg
-    const charactersNoBackground = await removeBackground(characterImage);
-    console.log("Clipped Character Image: ", charactersNoBackground);
+    // const charactersNoBackground = await removeBackground(characterImage);
+
+    const test = "https://cdn.imaginepro.ai/storage/v1/object/public/cdn/e1a3b3c1-cb4b-4535-bff7-9dbcfede4ba6.png";
+    const characterImagePath = await removeBackground(test);
+    console.log("Clipped Character Image: ", characterImagePath);
     
     // Generate backgrounds
-    const backgroundImages = await generateBackgrounds(script, summary);
+    // const backgroundImages = await generateBackgrounds(script, summary, backgrounds);
+
+    const backgroundImages = [
+      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/b4e4c76c-df36-4456-b800-fbd402660dc1.png',
+      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/b54563ef-dbdd-4a46-8d7f-8771507ca4ed.png',
+      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/4b9e8756-4445-4824-bab4-d3dfe8e66dc4.png',
+      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/1a4ebf8e-1736-4100-8f32-1c7484bc7f86.png',
+      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/234e4fb4-a505-404b-aa68-159be8b08fff.png',
+      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/3a991da4-9396-4e69-a528-c76bf3157e4d.png'
+    ]
+
     console.log("Background Images:", backgroundImages);
     
     // Compile final comic and send to client
     const comic = {
       script,
-      characterBuffer: charactersNoBackground,
+      characterImagePath,
       backgroundImages,
     };
 

@@ -3,16 +3,26 @@ const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const uploadPDF = async (req, res) => {
-  const pdfPath = req.file.path;
-  // const pdfPath = './server/controllers/McAmisSecurity23.pdf';
-  console.log('Current working directory:', process.cwd());
-  // Check if the file exists
-  if (!fs.existsSync(pdfPath)) {
-    console.error('PDF file not found:', pdfPath);
-    res.status(404).send('PDF file not found');
-    return;
-  }
-  try {
+
+  try{
+    console.log("RESPONSE PRINT", res);
+  
+    const vectorStore = await openai.beta.vectorStores.create({
+      name: "Research Paper Vector Store",
+    });
+
+    console.log("Vector store created");
+
+    const pdfPath = req.file.path;
+    // const pdfPath = './server/controllers/McAmisSecurity23.pdf';
+    console.log('Current working directory:', process.cwd());
+    // Check if the file exists
+    if (!fs.existsSync(pdfPath)) {
+      console.error('PDF file not found:', pdfPath);
+      res.status(404).send('PDF file not found');
+      return;
+    }
+
     // Step 1: Create the assistant
     const assistant = await openai.beta.assistants.create({
       name: "Research Paper Assistant",
@@ -39,11 +49,7 @@ const uploadPDF = async (req, res) => {
     console.log("Filestream created");
 
 
-    let vectorStore = await openai.beta.vectorStores.create({
-      name: "Research Paper Vector Store",
-    });
-
-    console.log("Vector store created");
+    
 
     await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams)
 
@@ -195,7 +201,7 @@ const splitScriptIntoPairs = (script) => {
   return pairs;
 };
 
-const charactersAndScript = async (summary) => {
+const generatePrompts = async (summary) => {
 
   console.log("Generating character description...");
 
@@ -213,7 +219,10 @@ const charactersAndScript = async (summary) => {
   }); 
 
   const characters = characterPrompt.choices[0].message.content;
+
   console.log("Generated characters:", characters);
+
+  console.log("Generating script...", characters);
 
   const scriptContent = ` 
         Research Summary: 
@@ -235,16 +244,49 @@ const charactersAndScript = async (summary) => {
     }); 
     
     const script = splitScriptIntoPairs(generatedScript.choices[0].message.content);
+
     console.log("Generated script:", script);
 
-  return { characters, script };
+    console.log("Generating background prompts...");
+
+    const backgrounds = [];
+
+    for (let i = 0; i < script.length; i++) {
+
+        const dialogue = script[i];
+
+        console.log("Generating background", i);
+        
+        if (dialogue.length > 2048) {
+          dialogue = dialogue.substring(0, 2048);
+        }
+
+        const backgroundPrompt = await openai.chat.completions.create({ 
+          model: "gpt-4o", 
+          max_tokens: 500,
+          messages: [{ 
+          "role": "system",
+          "content": ` 
+          Objective: In the given dialogue, there are main nouns of interest. Using simple vocabulary, briefly describe a setting that focuses on the main nouns of interest. DO NOT INCLUDE CHARACTERS OR DIALOGUE.
+          ` 
+          }, 
+          {"role": "user", "content": dialogue} 
+          ], 
+        }); 
+    
+        const background = backgroundPrompt.choices[0].message.content;
+
+        backgrounds.push(background);
+        console.log(`Generated background prompt: ${background}`);
+
+    }
+
+  return { characters, script, backgrounds };
 
 };
-
-
 
 module.exports = {
   uploadPDF,
   generateContent,
-  charactersAndScript,
+  generatePrompts,
 };
