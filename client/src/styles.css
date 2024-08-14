@@ -74,3 +74,17 @@
     font-family: monospace;
     font-size: smaller;
 }
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns per row */
+    gap: 20px; /* Adjust the gap between panels */
+    justify-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .grid-item {
+    width: 90%;
+    height: auto;
+    max-width: 512px; /* Adjust the max width based on your design */
+  }
