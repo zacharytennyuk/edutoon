@@ -8,7 +8,7 @@ def remove_background(image_url, output_path):
     try:
         # Fetch the image from the URL
         response = requests.get(image_url)
-        response.raise_for_status()  # Check if the request was successful
+        response.raise_for_status()
 
         # Open the image
         input_image = Image.open(io.BytesIO(response.content))

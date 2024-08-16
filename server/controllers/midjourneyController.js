@@ -20,8 +20,6 @@ const generateCharacters = async (input) => {
             prompt: prompt,
         };
 
-        // console.log("Request Data:", requestData);  // Log the request data
-
         const response = await axios.post(
             'https://api.mymidjourney.ai/api/v1/midjourney/imagine',
             requestData,
@@ -32,8 +30,6 @@ const generateCharacters = async (input) => {
                 }
             }
         );
-
-        // console.log("API Response:", response.data);
 
         if (!response.data.success) {
             throw new Error("Image generation request failed");
@@ -183,7 +179,7 @@ const generateBackgrounds = async (script, summary, backgrounds) => {
         return panels;
 
     } catch (error) {
-        // Log the full error response for debugging
+
         if (error.response) {
             console.error("Error response data:", error.response.data);
             console.error("Error response status:", error.response.status);
@@ -192,7 +188,6 @@ const generateBackgrounds = async (script, summary, backgrounds) => {
             console.error("Error message:", error.message);
         }
 
-        // Handle specific rate limit error
         if (error.response && error.response.status === 403 && error.response.data.error === 'Forbidden') {
             throw new Error('You have already queued the maximum number of jobs. Please wait for them to complete or upgrade your subscription.');
         }

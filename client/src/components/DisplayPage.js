@@ -28,8 +28,8 @@ export default function DisplayPage() {
     });
   };
 
-  const minLength = Math.min(script.length, backgroundImages.length); // Determine the minimum length
-  const gridTemplateColumns = minLength === 2 || minLength === 4 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)'; // Adjust grid for 4 panels
+  const minLength = Math.min(script.length, backgroundImages.length);
+  const gridTemplateColumns = minLength === 2 || minLength === 4 ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)';
 
   return (
     <div className="Page">
@@ -50,7 +50,6 @@ export default function DisplayPage() {
           padding: '20px',
           display: 'inline-block',
           margin: '0 auto',
-          // width: '100%',
         }}
       >
         <div
@@ -58,7 +57,7 @@ export default function DisplayPage() {
           className="grid-container"
           style={{
             display: 'grid',
-            gridTemplateColumns: gridTemplateColumns, // Adjust grid columns dynamically
+            gridTemplateColumns: gridTemplateColumns,
             gap: '20px',
             maxWidth: '1024px',
             margin: '0 auto',

@@ -11,7 +11,11 @@ const summarizeChunk = async (text) => {
       messages: [
         {
           role: "system",
-          content: "You are a highly skilled academic assistant. Using simple vocabulary, please summarize the following text in a concise manner."
+          content: `Summarize the key research takeaways including:
+      (1) the paper's area of study
+      (2) the fundamental problem within the area that the research is addressing
+      (3) the paper's solution to the problem
+      (4) what the implications/impact of the solution is on the state of the art`,
         },
         { role: "user", content: text }
       ]
@@ -69,98 +73,6 @@ const summarizePDF = async (paper) => {
     throw error;
   }
 };
-
-// const summarizePDF = async (pdfPath) => {
-//   try {
-
-//     console.log("PDF PATH:", pdfPath);
-
-//     console.log("Creating vector store...");
-
-//     // Step 1: Create the vector store
-//     const vectorStore = await openai.beta.vectorStores.create({
-//       name: `Research-Paper-Vector-Store${new Date().toISOString()}`,
-//     });
-
-//     console.log("Creating file stream...");
-
-//     // Step 2: Upload the PDF file to the vector store
-//     const fileStreams = [fs.createReadStream(pdfPath)];
-//     await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams);
-
-//     console.log("Creating assistant...");
-
-//     // Step 3: Create the assistant with file search capability
-//     const assistant = await openai.beta.assistants.create({
-//       name: "Research Paper Assistant",
-//       instructions: "Search the research paper for title, authors, and a summary of key takeaways.",
-//       model: "gpt-4-turbo",
-//       tools: [{ type: "file_search" }],
-//       tool_resources: { file_search: { vector_store_ids: [vectorStore.id] } },
-//     });
-
-//     // Step 4: Create a thread with search prompts to extract title, authors, and summary
-//     const thread = await openai.beta.threads.create({
-//       messages: [
-//         {
-//           role: "user",
-//           content: "Extract the title of the research paper.",
-//           attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
-//         },
-//       ],
-//     });
-
-//     // Function to run the assistant and extract content
-//     const runAssistant = async (content) => {
-//       const runStream = openai.beta.threads.runs.stream(thread.id, {
-//         assistant_id: assistant.id,
-//       });
-
-//       let result = "";
-//       return new Promise((resolve, reject) => {
-//         runStream.on("textCreated", (event) => {
-//           if (event.content && event.content[0] && event.content[0].text) {
-//             result += event.content[0].text.value;
-//           }
-//         });
-
-//         runStream.on("end", () => {
-//           resolve(result.trim());
-//         });
-
-//         runStream.on("error", (error) => {
-//           reject(`Error processing PDF: ${error.message}`);
-//         });
-//       });
-//     };
-
-//     // Extract Title
-//     const title = await runAssistant("Extract the title of the research paper.");
-
-//     // Extract Authors
-//     await openai.beta.threads.messages.create(thread.id, {
-//       role: "user",
-//       content: "Extract the authors of the research paper.",
-//       attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
-//     });
-//     const authors = await runAssistant("Extract the authors of the research paper.");
-
-//     // Extract Summary
-//     await openai.beta.threads.messages.create(thread.id, {
-//       role: "user",
-//       content: "Provide a summary of the key takeaways from the research paper.",
-//       attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
-//     });
-//     const summary = await runAssistant("Provide a summary of the key takeaways from the research paper.");
-
-//     // Return the extracted information
-//     return { title, authors, summary };
-
-//   } catch (error) {
-//     console.error("Error processing PDF:", error.message);
-//     throw new Error(`Error summarizing PDF: ${error.message}`);
-//   }
-// };
 
 const splitScriptIntoPairs = (script) => {
   const lines = script.split('\n').filter(line => line.trim() !== '');

@@ -44,6 +44,9 @@ app.get('/image/:filename', (req, res) => {
     }
   });
 });
+
+// vestigial PDF processing
+
 // const upload = multer({ dest: 'uploads/' });
 // app.get('/test-extract', (req, res) => {
 //   const pdfPath = path.join(__dirname, '..', 'client/public', 'McAmisSecurity23.pdf');

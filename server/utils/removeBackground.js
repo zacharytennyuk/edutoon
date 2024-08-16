@@ -4,13 +4,11 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const { v4: uuidv4 } = require('uuid');
 
-// Create a temp directory if it doesn't exist
 const tempDir = path.join(os.tmpdir(), 'edutoon');
 if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir);
 }
 
-// Cleanup function to remove all files in the temp directory
 const cleanupTempDir = () => {
     fs.readdir(tempDir, (err, files) => {
         if (err) return console.error("Error reading temp directory:", err);

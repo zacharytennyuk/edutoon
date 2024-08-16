@@ -27,7 +27,7 @@ export default function HomePage() {
         formData.append('pdf', pdf);
         panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data' // Ensures the file is correctly sent
+            'Content-Type': 'multipart/form-data'
           }
         });
       } else {

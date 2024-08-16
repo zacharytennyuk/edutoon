@@ -24,11 +24,10 @@ const P5Canvas = ({ imageUrl, characterImageUrl, onComplete }) => {
         // Draw the top quadrant of the background image
         p.image(img, 0, 0, 1024, 1024, 0, 0, img.width / 2, img.height / 2);
 
-        // Draw the character image centered on the canvas but start a third of the way down
         const characterWidth = 1024;
         const characterHeight = 1024;
         const characterX = (p.width - characterWidth) / 2;
-        const characterY = p.height / 6; // Start drawing one-third down the canvas
+        const characterY = p.height / 6;
         p.image(characterImg, characterX, characterY, characterWidth, characterHeight);
 
         // Convert the canvas to an image and pass it to the parent component
