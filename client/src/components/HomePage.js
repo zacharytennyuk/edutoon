@@ -27,17 +27,15 @@ export default function HomePage() {
         formData.append('pdf', pdf);
         panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`, formData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data' // Ensures the file is correctly sent
           }
         });
       } else {
         panel = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/process-paper`, { abstract });
       }
-
-      console.log("Panel:", panel);
-
+  
       const { script, characterImagePath, backgroundImages } = panel.data.comic;
-
+  
       navigate('/display', {
         state: {
           script,

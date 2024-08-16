@@ -1,28 +1,36 @@
 // const { createAssistant, uploadFileToVectorStore, updateAssistantWithVectorStore, createThread, runAssistant } = require('../services/comicServices');
-const { uploadPDF, generatePrompts } = require('../controllers/openaiController');
+const { summarizePDF, generatePrompts } = require('../controllers/openaiController');
 const { generateCharacters, generateBackgrounds } = require('../controllers/midjourneyController');
 const { removeBackground } = require('../utils/removeBackground');
 const fs = require('fs');
 
 const processPaperToComic = async (paper) => {
   try {
+    if (!paper || typeof paper !== 'string') {
+      throw new Error('Invalid input: expected a non-empty string.');
+    }
 
-    // Summarize PDF here:
-    // const { summary } = await uploadPDF(paper);
+    console.log('Received paper for processing:', paper);
 
-    const summary = `
-    Area of Study:
-        The paper looks at the privacy and safety problems with 3D online house tours used in real estate listings, especially focusing on the personal information that might be shared by mistake through these virtual tours.
+    // Call summarizePDF and await its result
+    const summary = await summarizePDF(paper);
 
-    Fundamental Problem:
-        The main problem is that personal information can be leaked through 3D virtual home tours on real estate websites like Zillow, and bad people can use this information.
+    // Log the summary to ensure it's being captured
+    console.log('Summary:', summary);
 
-    Solution:
-        The research examines 44 3D home tours to find out what kinds of personal information are shown and gives advice and tech solutions to reduce privacy risks.
+    // const summary = `
+    // Area of Study:
+    //     The paper looks at problems with 3D online house tours used in real estate listings.
 
-    Implications/Impact:
-        The study shows the need for better privacy protections and tech solutions to stop personal information from being shared by mistake. This is very important for keeping people safe and private in the digital real estate market. This could lead to changes in how the industry works to better protect privacy.
-    `;
+    // Fundamental Problem:
+    //     The main problem is that 3D virtual home tours on real estate websites like Zillow are hard to view for the average consumer.
+
+    // Solution:
+    //     The research examines 44 3D home tours to find out what kinds of methods are used to display furniture.
+
+    // Implications/Impact:
+    //     The study shows the need for better user experience with these virtual tours through using friendly looking icons.
+    // `;
     // Generate characters and script
     const { characters, script, backgrounds } = await generatePrompts(summary);
 
@@ -31,27 +39,23 @@ const processPaperToComic = async (paper) => {
     console.log("Backgrounds: ", backgrounds);
 
     // Generate character image
-    // const {characterImage} = await generateCharacters(characters);
-    // console.log("Character Image: ", characterImage);
+    const {characterImage} = await generateCharacters(characters);
+    console.log("Character Image: ", characterImage);
     
     // Remove background from character images using rembg
-    // const charactersNoBackground = await removeBackground(characterImage);
+    const characterImagePath = await removeBackground(characterImage);
 
-    const test = "https://cdn.imaginepro.ai/storage/v1/object/public/cdn/e1a3b3c1-cb4b-4535-bff7-9dbcfede4ba6.png";
-    const characterImagePath = await removeBackground(test);
+    // const test = "https://cdn.imaginepro.ai/storage/v1/object/public/cdn/e1a3b3c1-cb4b-4535-bff7-9dbcfede4ba6.png";
+    // const characterImagePath = await removeBackground(test);
     console.log("Clipped Character Image: ", characterImagePath);
     
     // Generate backgrounds
-    // const backgroundImages = await generateBackgrounds(script, summary, backgrounds);
+    const backgroundImages = await generateBackgrounds(script, summary, backgrounds);
 
-    const backgroundImages = [
-      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/b4e4c76c-df36-4456-b800-fbd402660dc1.png',
-      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/b54563ef-dbdd-4a46-8d7f-8771507ca4ed.png',
-      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/4b9e8756-4445-4824-bab4-d3dfe8e66dc4.png',
-      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/1a4ebf8e-1736-4100-8f32-1c7484bc7f86.png',
-      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/234e4fb4-a505-404b-aa68-159be8b08fff.png',
-      'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/3a991da4-9396-4e69-a528-c76bf3157e4d.png'
-    ]
+    // const backgroundImages = [
+    //   'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/b4e4c76c-df36-4456-b800-fbd402660dc1.png',
+    //   'https://cdn.imaginepro.ai/storage/v1/object/public/cdn/b54563ef-dbdd-4a46-8d7f-8771507ca4ed.png',
+    // ]
 
     console.log("Background Images:", backgroundImages);
     

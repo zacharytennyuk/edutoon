@@ -2,189 +2,165 @@ const fs = require('fs');
 const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const uploadPDF = async (req, res) => {
+const summarizeChunk = async (text) => {
+  try {
+    console.log("Summarizing chunk of length:", text.length);
 
-  try{
-    console.log("RESPONSE PRINT", res);
-  
-    const vectorStore = await openai.beta.vectorStores.create({
-      name: "Research Paper Vector Store",
-    });
-
-    console.log("Vector store created");
-
-    const pdfPath = req.file.path;
-    // const pdfPath = './server/controllers/McAmisSecurity23.pdf';
-    console.log('Current working directory:', process.cwd());
-    // Check if the file exists
-    if (!fs.existsSync(pdfPath)) {
-      console.error('PDF file not found:', pdfPath);
-      res.status(404).send('PDF file not found');
-      return;
-    }
-
-    // Step 1: Create the assistant
-    const assistant = await openai.beta.assistants.create({
-      name: "Research Paper Assistant",
-      instructions: `Search this research paper pdf and summarize the key takeaways listed here:
-      (1) the paper's area of study
-      (2) the fundamental problem within the area that the research is addressing
-      (3) the paper's solution to the problem
-      (4) what the implications/impact of the solution is on the state of the art`,
-      model: "gpt-4-turbo",
-      tools: [{ type: "file_search" }],
-    }, {
-      headers: {
-        'OpenAI-Beta': 'assistants=v2'
-      }
-    });
-
-    console.log("Assistant created");
-
-    console.log("OpenAI vectorStores methods:", openai.beta.vectorStore);
-
-    // Step 2: Create a vector store and upload the file
-    const fileStreams = [fs.createReadStream(pdfPath)];
-
-    console.log("Filestream created");
-
-
-    
-
-    await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams)
-
-    console.log("File uploaded to vector store");
-
-    // Step 3: Update the assistant to use the vector store
-    await openai.beta.assistants.update(assistant.id, {
-      tool_resources: { file_search: { vector_store_ids: [vectorStore.id] } },
-    });
-
-    console.log("Assistant updated with vector store");
-
-    // Step 4: Create a thread with the file attached
-    const thread = await openai.beta.threads.create({
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
       messages: [
         {
-          role: "user",
-          content: "Summarize the key takeaways from this research paper.",
-          attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
+          role: "system",
+          content: "You are a highly skilled academic assistant. Using simple vocabulary, please summarize the following text in a concise manner."
         },
-      ],
+        { role: "user", content: text }
+      ]
     });
 
-    console.log("Thread created");
+    const summary = response.choices[0]?.message?.content;
+    if (!summary) {
+      throw new Error("Failed to generate summary. The API returned null or undefined.");
+    }
 
-    // Step 5: Create a run and get the output
-    const stream = openai.beta.threads.runs.stream(thread.id, {
-      assistant_id: assistant.id,
-    });
-
-    let summary = "";
-    stream.on("textCreated", (event) => {
-      summary += event.content[0].text.value;
-    });
-
-    stream.on("end", () => {
-      res.send({ summary });
-    });
-
-    stream.on("error", (error) => {
-      console.error("Error processing PDF:", error);
-      res.status(500).send(`Error processing PDF: ${error.message}`);
-    });
+    console.log("Generated summary of length:", summary.length);
+    return summary;
   } catch (error) {
-    console.error("Error processing PDF:", error.response ? error.response.data : error.message);
-    res.status(500).send({
-      error: 'Error processing PDF',
-      details: error.response ? error.response.data : error.message
-    });
-  } finally {
-    // fs.unlink(pdfPath, (err) => {
-    //   if (err) console.error(`Error deleting file: ${err}`);
-    // });
+    console.error("Error in summarizeChunk:", error.message);
+    throw error;
   }
 };
-  
-const generateContent = async (abstract) => {
 
-    console.log("Generating content...");
+const summarizePDF = async (paper) => {
+  try {
+    console.log("Starting summarization...");
 
-    const prompt = await openai.chat.completions.create({ 
-        model: "gpt-4o", 
-        max_tokens: 500,
-        messages: [{ 
-        "role": "system",
-        "content": ` 
-        System Role: Detailed Prompt Generator for Image Creation 
+    const maxLength = 10000;
+    let paperChunks = [];
 
-        Objective: Generate highly detailed prompts for image generation that include comprehensive descriptions of the scene, characters, 
-        background, and context inspired from this research abstract. 
+    for (let i = 0; i < paper.length; i += maxLength) {
+      const chunk = paper.substring(i, i + maxLength);
+      paperChunks.push(chunk);
+    }
 
-        Instructions: 
-    
-        Scene Description: 
-        Specify the type of scene (e.g., "VR-computer science lab"). 
-        Specify the style of the image should be comic-style. 
-        Describe the setting in detail, including any notable features, equipment, and atmosphere. 
-        Mention the overall mood or theme of the scene. 
-        
-        Character Descriptions: 
-        Provide detailed descriptions of each character, including name, physical appearance, clothing, and accessories. 
-        Describe the characters' expressions, body language, and interactions. 
-        Include any specific attributes or distinguishing features (e.g., "blue-haired scientist wearing a trench coat"). 
+    let summaries = [];
 
-        Background and Elements: 
-        Describe the background in detail, including any significant elements or props. 
-        Ensure the background is relevant to the scene and complements the characters. 
-        Mention any specific lighting or visual effects (e.g., "holographic displays, digital interfaces"). 
+    // Summarize each chunk
+    for (const chunk of paperChunks) {
+      const summary = await summarizeChunk(chunk);
+      summaries.push(summary);
+    }
 
-        Context and Action: 
-        Explain the context of the scene and what is happening (e.g., "characters having an engaging conversation about virtual privacy"). 
-        Include any actions or activities the characters are involved in. 
-        Describe any relevant objects or tools the characters are using. 
-        ` 
-        }, 
-        {"role": "user", "content": abstract} 
-        ], 
-    }); 
+    // Combine all summaries into one
+    let combinedSummary = summaries.join(' ');
 
-    const generatedPrompt = prompt.choices[0].message.content;
-    console.log("Generated prompt:", generatedPrompt);
-    console.log("");
+    console.log("Combined summary length:", combinedSummary.length);
 
-    const summaryContent = ` 
-        Abstract: 
-        ${abstract} 
-        Image Scenario: 
-        ${generatedPrompt} 
-    `; 
+    // If the combined summary is still too long, summarize it further
+    while (combinedSummary.length > maxLength) {
+      console.log("Combined summary too long! Snipping...");
+      combinedSummary = await summarizeChunk(combinedSummary);
+    }
 
-    const summary = await openai.chat.completions.create({ 
-        model: "gpt-4o",
-        messages: [ 
-            {"role": "system", "content": `Create a text summary of the research abstract 
-                input in the form of a dialogue script between the characters in the given 
-                image scenario. Only include lines of dialogue from the characters.
-                
-                Example Format:
-                Character A: ...
-                Character B: ...
-                `}, 
-            {"role": "user", "content": summaryContent} 
-        ], 
-    }); 
-    
-    const generatedSummary = summary.choices[0].message.content;
-    console.log("Generated summary:", generatedSummary);
-
-    const panel = await openai.images.generate({model: "dall-e-3", prompt: generatedPrompt});
-    const generatedImage = panel.data[0].url;
-
-    const testImage = 'https://cdn.pixabay.com/photo/2017/01/30/10/59/animal-2020580_1280.jpg';
-
-    return { generatedSummary, generatedPrompt, generatedImage };
+    console.log("Final summarized length:", combinedSummary.length);
+    console.log(combinedSummary);
+    return combinedSummary;
+  } catch (error) {
+    console.error("Error in summarizePDF:", error.message);
+    throw error;
+  }
 };
+
+// const summarizePDF = async (pdfPath) => {
+//   try {
+
+//     console.log("PDF PATH:", pdfPath);
+
+//     console.log("Creating vector store...");
+
+//     // Step 1: Create the vector store
+//     const vectorStore = await openai.beta.vectorStores.create({
+//       name: `Research-Paper-Vector-Store${new Date().toISOString()}`,
+//     });
+
+//     console.log("Creating file stream...");
+
+//     // Step 2: Upload the PDF file to the vector store
+//     const fileStreams = [fs.createReadStream(pdfPath)];
+//     await openai.beta.vectorStores.fileBatches.uploadAndPoll(vectorStore.id, fileStreams);
+
+//     console.log("Creating assistant...");
+
+//     // Step 3: Create the assistant with file search capability
+//     const assistant = await openai.beta.assistants.create({
+//       name: "Research Paper Assistant",
+//       instructions: "Search the research paper for title, authors, and a summary of key takeaways.",
+//       model: "gpt-4-turbo",
+//       tools: [{ type: "file_search" }],
+//       tool_resources: { file_search: { vector_store_ids: [vectorStore.id] } },
+//     });
+
+//     // Step 4: Create a thread with search prompts to extract title, authors, and summary
+//     const thread = await openai.beta.threads.create({
+//       messages: [
+//         {
+//           role: "user",
+//           content: "Extract the title of the research paper.",
+//           attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
+//         },
+//       ],
+//     });
+
+//     // Function to run the assistant and extract content
+//     const runAssistant = async (content) => {
+//       const runStream = openai.beta.threads.runs.stream(thread.id, {
+//         assistant_id: assistant.id,
+//       });
+
+//       let result = "";
+//       return new Promise((resolve, reject) => {
+//         runStream.on("textCreated", (event) => {
+//           if (event.content && event.content[0] && event.content[0].text) {
+//             result += event.content[0].text.value;
+//           }
+//         });
+
+//         runStream.on("end", () => {
+//           resolve(result.trim());
+//         });
+
+//         runStream.on("error", (error) => {
+//           reject(`Error processing PDF: ${error.message}`);
+//         });
+//       });
+//     };
+
+//     // Extract Title
+//     const title = await runAssistant("Extract the title of the research paper.");
+
+//     // Extract Authors
+//     await openai.beta.threads.messages.create(thread.id, {
+//       role: "user",
+//       content: "Extract the authors of the research paper.",
+//       attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
+//     });
+//     const authors = await runAssistant("Extract the authors of the research paper.");
+
+//     // Extract Summary
+//     await openai.beta.threads.messages.create(thread.id, {
+//       role: "user",
+//       content: "Provide a summary of the key takeaways from the research paper.",
+//       attachments: [{ file_id: vectorStore.id, tools: [{ type: "file_search" }] }],
+//     });
+//     const summary = await runAssistant("Provide a summary of the key takeaways from the research paper.");
+
+//     // Return the extracted information
+//     return { title, authors, summary };
+
+//   } catch (error) {
+//     console.error("Error processing PDF:", error.message);
+//     throw new Error(`Error summarizing PDF: ${error.message}`);
+//   }
+// };
 
 const splitScriptIntoPairs = (script) => {
   const lines = script.split('\n').filter(line => line.trim() !== '');
@@ -286,7 +262,6 @@ const generatePrompts = async (summary) => {
 };
 
 module.exports = {
-  uploadPDF,
-  generateContent,
+  summarizePDF,
   generatePrompts,
 };
