@@ -7,7 +7,7 @@ const summarizeChunk = async (text) => {
     console.log("Summarizing chunk of length:", text.length);
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
