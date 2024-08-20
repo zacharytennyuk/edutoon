@@ -39,8 +39,10 @@ How to Run
 include your OpenAI and myMidjourney API keys in your .env file
 
 cd to directory
-	npm install
+
+        npm install
  
  to run
-	npm run dev
+
+        npm run dev
  
